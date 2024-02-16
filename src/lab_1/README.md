@@ -27,11 +27,11 @@ You are about to go on a turbocharged tour of what's happening in this laborator
 
 ## Objectives:
 
-* Populate the class Grammar with the variant
-* Implement the generate_string() method in Grammar class
-* Construct the blueprint of Finite Automaton
-* Implement the toFiniteAutomaton() method in Grammar class
-* Implement the stringBelongToLanguage(String string) method in the FiniteAutomata class
+* Populate the class `Grammar` with the variant
+* Implement the `generate_string()` method in Grammar class
+* Construct the `blueprint` of Finite Automaton
+* Implement the `toFiniteAutomaton()` method in Grammar class
+* Implement the `stringBelongToLanguage(String string)` method in the FiniteAutomata class
 * Understand the basic concepts of Grammar & Finite Automata
 
 ## Implementation description
@@ -59,9 +59,9 @@ private String generateString(Character symbol) {
     }
 ```
 
-Next, I defined the FiniteAutomaton class, I've decided to use lists for representing states, alphabet and finalStates (as it might be more than one). The transitions are represented in a Map with key Character and Value another Map of Characters, for convenience, in order to treat non-terminals and terminals separately (each non-terminal is assigned to a map of a key-terminal with value non-terminal/or not), which means treating the states and transitions separately. Comparing to grammar, where the behaviour of the string creation is obvious, I've seen FA as a more complex structure, and avoided using List in this case.
+Next, I defined the `FiniteAutomaton` class, I've decided to use `Lists` for representing states, alphabet and finalStates (as it might be more than one). The transitions are represented in a `Map` with `key Character` and `Value another Map of Characters`, for convenience, in order to treat non-terminals and terminals separately (each non-terminal is assigned to a map of a key-terminal with value non-terminal/or not), which means treating the states and transitions separately. Comparing to grammar, where the behaviour of the string creation is obvious, I've seen FA as a more complex structure, and avoided using List in this case.
 
-In order to convert the Grammar to FA, I simply converted the defined grammar elements into the FA elements. So, for the Sigma and q0, nothing really changes, while for the Q, we convert Vn into another list and additionally add F (final state). And here goes the most interesting part, in order to define delta, we can first iterate through all Vn's and put them in the map as keys, with an empty map-value for each. Then, in the same loop, we extract the productions (a List) for each Vn, and now iterate through these productions in order to split the terminal from non-terminal and put them in the inner map. So the inner map will contain the key-terminal symbol and value-corresponding non-terminal or F. An important moment here is to check the grammar for regularity, which is done by checking the terminals to be on the left side,  as this is a Right Linear Grammar.
+In order to convert the Grammar to FA, I simply converted the defined grammar elements into the FA elements. So, for the Sigma and q0, nothing really changes, while for the Q, we convert Vn into another `List and additionally add F` (final state). And here goes the most interesting part, in order to define delta, we can first iterate through all Vn's and put them in the `Map as keys`, with an `empty Map-value` for each. Then, in the same loop, we extract the productions (a List) for each Vn, and now `iterate through these productions` in order to split the terminal from non-terminal and put them in the `inner map`. So the inner map will contain the key-terminal symbol and value-corresponding non-terminal or F. An important moment here is to check the grammar for regularity, which is done by checking the terminals to be on the left side,  as this is a `Right Linear Grammar`.
 ```
 Map<Character, Map<Character, Character>> faTransitions = new HashMap<>();
 
@@ -78,7 +78,7 @@ for (Character state : Vn) {
 faTransitions.get(state).put(input, nextState);
 ```
 
-In order to implement the next task which is checking the word belongness to the language via FA, I have created the following graph representation to  better visualize how everything should work. Basically we receive a word as input, and we go through each letter (symbol) and try go get to the final state, without any errors. So if we receive an input as *kitty*, we analyze the word letter by letter, and try to apply each symbol as a parameter to the current state, but this example obviously does not this in our language.
+In order to implement the next task which is checking the word belongness to the language via FA, I have created the following `graph representation` to  better visualize how everything should work. Basically we receive a word as input, and we go through each letter (symbol) and try get to the final state, without any errors. So if we receive an input as *kitty*, we analyze the word letter by letter, and try to apply each symbol as a parameter to the current state, but this example obviously does not this in our language.
 
 <p align="center">
   <img src="../../images/FA-graph-17.png" alt="Finite Automaton Graph" width="400"/>
@@ -87,7 +87,7 @@ In order to implement the next task which is checking the word belongness to the
 </p>
 
 
-The last part of the lab requires the contruction of the method for checking string apartenence to the language. So, basically, I've tried to transpose the algorithm from the courses into code. First, we check whether each letter in the string belongs to the alphabet via a for-loop, if not then there is no sense of checking further. Next, in the same loop, starting with the first state, retrieve the transition rules for the state and check if there is a transition rule for the current letter in the current state, if not - the string does not belong to language, but if yes - continue by updating the current state based on the transition rule (going into the next state). This will take place until we go through the entire length of the String. When we reach the end, we check whether the state that we belong to is one of the final ones, and it is all done.
+The last part of the lab requires the contruction of the method for checking string apartenence to the language. So, basically, I've tried to transpose the algorithm from the courses into code. First, we check whether each letter in the `String` belongs to the alphabet via a `for-loop`, if not then there is no sense of checking further. Next, in the same loop, starting with the first state, retrieve the transition rules for the state and check if there is a transition rule for the current letter in the current state, if not - the string does not belong to language, but if yes - continue by updating the current state based on the transition rule (going into the next state). This will take place until we go through the entire length of the `String`. When we reach the end, we check whether the state that we belong to is one of the final ones, and it is all done.
 ```
 for (int i = 0; i < inputString.length(); i++) {
   Character currentLetter = inputString.charAt(i);
@@ -109,7 +109,7 @@ In order to better visualize the transitions made while generating the string, I
 System.out.println(symbol + " -> " + production);
 ```
 
-So, here is an example of how the program does go through the productions, and its final result:
+So, here is an example of how the program goes through the productions, and its final result:
 ```
 S -> dA
 A -> bA
@@ -149,7 +149,7 @@ public void displayAutomaton() {
 }
 ```
 
-So, here is what I've got for converting the 17th variant to FA: 
+So, here is what I've got for converting the *17*th variant to FA: 
 ```
 Finite Automaton Structure:
 States: [S, A, B, C, F]
