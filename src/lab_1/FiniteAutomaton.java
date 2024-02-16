@@ -19,22 +19,22 @@ public class FiniteAutomaton {
         // Add an explicit final state 'F' to represent acceptance for productions ending in terminal symbols
         this.states.add('F');
     }
-//    public void displayAutomaton() {
-//        System.out.println("Finite Automaton Structure:");
-//        System.out.println("States: " + states);
-//        System.out.println("Alphabet: " + alphabet);
-//        System.out.println("Start State: " + startState);
-//        System.out.println("Final States: " + finalStates);
-//        System.out.println("Transitions: ");
-//        for (Map.Entry<Character, Map<Character, Character>> entry : transitions.entrySet()) {
-//            Character state = entry.getKey();
-//            for (Map.Entry<Character, Character> trans : entry.getValue().entrySet()) {
-//                Character input = trans.getKey();
-//                Character nextState = trans.getValue();
-//                System.out.println("    " + state + " --(" + input + ")--> " + nextState);
-//            }
-//        }
-//    }
+    public void displayAutomaton() {
+        System.out.println("Finite Automaton Structure:");
+        System.out.println("States: " + states);
+        System.out.println("Alphabet: " + alphabet);
+        System.out.println("Start State: " + startState);
+        System.out.println("Final States: " + finalStates);
+        System.out.println("Transitions: ");
+        for (Map.Entry<Character, Map<Character, Character>> entry : transitions.entrySet()) {
+            Character state = entry.getKey();
+            for (Map.Entry<Character, Character> trans : entry.getValue().entrySet()) {
+                Character input = trans.getKey();
+                Character nextState = trans.getValue();
+                System.out.println("    " + state + " --(" + input + ")--> " + nextState);
+            }
+        }
+    }
 
     public boolean stringBelongsToLanguage(String inputString) {
         Character currentState = startState; // Start from the initial state

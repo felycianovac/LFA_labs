@@ -7,7 +7,7 @@ public class Main {
             System.out.println(grammar.generateString());
         }
         FiniteAutomaton finiteAutomaton = grammar.toFiniteAutomaton();
-        //finiteAutomaton.displayAutomaton();
+        finiteAutomaton.displayAutomaton();
     }
 
            }

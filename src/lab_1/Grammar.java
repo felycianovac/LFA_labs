@@ -91,10 +91,7 @@ public class Grammar {
         List<Character> finalStates = new ArrayList<>(Collections.singletonList('F'));
         // Prepare a list of all states, including non-terminals and the special final state 'F'.
         List<Character> statesWithFinal = new ArrayList<>(Vn);
-        // Ensure 'F' is included as a state only once, even if it's already implicitly part of the automaton.
-        if(!statesWithFinal.contains('F')){
-            statesWithFinal.add('F');
-        }
+
         return new FiniteAutomaton(statesWithFinal, Vt, faTransitions, S, finalStates);
     }
 

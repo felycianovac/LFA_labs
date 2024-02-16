@@ -6,6 +6,11 @@
 ----
 
 ## Theory
+### Let's Get to the Point
+You are about to go on a turbocharged tour of what;s happening in this laboratory work. I promise to keep it snappy because, let's face it, who has enough time?, and I'm betting you're scrolling through this in between sips of coffee. So, fasten your seatbelt and let's get started.
+
+#### Essentials: 
+
 You are about to go on a turbocharged tour of what's happening in this laboratory work. I promise to keep it snappy because, let's face it, nobody has enough time today, and I'm betting you're scrolling through this in between sips of coffee. So, fasten your seatbelt and let's get started.
 
 #### Essentials: 
@@ -95,3 +100,4 @@ for (int i = 0; i < inputString.length(); i++) {
 ## Conclusions / Screenshots / Results
 
 
+## References
