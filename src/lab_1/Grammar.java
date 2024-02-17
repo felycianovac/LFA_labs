@@ -56,6 +56,7 @@ public class Grammar {
             }
         }
         return result.toString();
+
     }
 
     public FiniteAutomaton toFiniteAutomaton() {

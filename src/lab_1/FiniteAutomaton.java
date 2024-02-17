@@ -56,7 +56,7 @@ public class FiniteAutomaton {
                 currentState = currentTransitions.get(currentLetter);
             } else {
                 // If no transition rule is found for the current letter, print an error message and return false.
-                System.out.println("No transition found for state " + currentState + " with input " + currentLetter);
+                //System.out.println("No transition found for state " + currentState + " with input " + currentLetter);
                 return false; // Transition not found
             }
         }
