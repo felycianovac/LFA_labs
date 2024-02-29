@@ -6,7 +6,7 @@ public class Grammar {
 
     private List<Character> Vn;
     private List<Character> Vt;
-    private Map<Character,List<String>> P;
+    private Map<String,List<String>> P;
     private Character S;
     private Random random;
 
@@ -22,10 +22,10 @@ public class Grammar {
 
         //initialize Production rules
         P = Map.ofEntries(
-                Map.entry('S', Arrays.asList("dA")),
-                Map.entry('A', Arrays.asList("aB", "bA")),
-                Map.entry('B', Arrays.asList("bC", "aB", "d")),
-                Map.entry('C', Arrays.asList("cB"))
+                Map.entry("S", Arrays.asList("dA")),
+                Map.entry("A", Arrays.asList("aB", "bA")),
+                Map.entry("B", Arrays.asList("bC", "aB", "d")),
+                Map.entry("C", Arrays.asList("cB"))
         );
 
         // Set start symbol
@@ -34,13 +34,14 @@ public class Grammar {
 //
 
     public String generateString() {
-        return generateString(S);
+        return generateString(S.toString());
     }
 
-    private String generateString(Character symbol) {
+    private String generateString(String symbol) {
+        //consider that the given grammar is of type 0, and the string-value has a single character
         //if the symbol is a terminal symbol, return it
-        if (Vt.contains(symbol)) {
-            return symbol.toString();
+        if (Vt.contains(symbol.charAt(0))){
+            return symbol;
         }
         //get production rules for the non-terminal symbol
         List<String> productions = P.get(symbol);
@@ -50,7 +51,7 @@ public class Grammar {
         StringBuilder result = new StringBuilder();
         for (char c : production.toCharArray()) {
             if(Vn.contains(c)){ //if the symbol is a non-terminal symbol, recursively generate a string for it
-                result.append(generateString(c));
+                result.append(generateString(c + ""));
             } else {
                 result.append(c);
             }
@@ -69,7 +70,7 @@ public class Grammar {
             // For each state, initialize its transition rules as an empty map.
             faTransitions.put(state, new HashMap<>());
             // Retrieve the production rules for the current non-terminal symbol.
-            List<String> productions = P.get(state);
+            List<String> productions = P.get(state.toString());
 
             // Iterate over each production rule, adding a transition rule for each terminal symbol.
             for (String production : productions) {
@@ -95,5 +96,45 @@ public class Grammar {
 
         return new FiniteAutomaton(statesWithFinal, Vt, faTransitions, S, finalStates);
     }
+
+//    public Integer classifyGrammar(){
+//        int type3Pass = 0;
+//        int type2Pass = 0;
+//        int type1Pass = 0;
+//        int type0Pass = 0;
+//
+//        for (Map.Entry<Character, List<String>> entry : P.entrySet()) {
+//            Character key = entry.getKey(); // The non-terminal from the LHS
+//            List<String> values = entry.getValue(); // The list of productions for this non-terminal
+//
+//            for (String value : values) {
+//                // Count uppercase and lowercase characters in the production
+//                long uppercaseCount = value.chars().filter(Character::isUpperCase).count();
+//                long lowercaseCount = value.chars().filter(Character::isLowerCase).count();
+//
+//                // Type 3 (Regular Grammar) Check: Single non-terminal on LHS and at most one non-terminal on RHS
+//                if (uppercaseCount <= 1 && value.length() - uppercaseCount <= 1) {
+//                    type3Pass++;
+//                }
+//                // Type 2 (Context-Free Grammar) Check: Since LHS is always a single non-terminal, all productions pass by default
+//                else {
+//                    type2Pass++;
+//                }
+//
+//
+//        }
+//
+//        // Determine the grammar type based on the pass counts
+//        if (type0Pass > 0) {
+//            return 0; // Unrestricted
+//        } else if (type1Pass > 0) {
+//            return 1; // Context-Sensitive
+//        } else if (type2Pass > 0) {
+//            return 2; // Context-Free
+//        } else {
+//            return 3; // Regular
+//        }
+//    }
+// }
 
 }

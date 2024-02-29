@@ -10,7 +10,7 @@ public class Main {
             System.out.println("Generated string" + " " + (i + 1) + " : " + grammar.generateString());
         }
         FiniteAutomaton finiteAutomaton = grammar.toFiniteAutomaton();
-        //finiteAutomaton.displayAutomaton();
+//        finiteAutomaton.displayAutomaton();
         System.out.println(" ");
         System.out.println("Enter a string to check if it belongs to the language (or type 'exit' to quit): ");
 
