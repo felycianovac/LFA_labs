@@ -7,15 +7,35 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Grammar grammar = new Grammar();
+
+        //let S=q0, A=q1, B=q2, C=q3
+        List<Character> states = Arrays.asList('S','A', 'B', 'C');
+        List<Character> alphabet = Arrays.asList('a', 'b','c');
+        List<Character> finalStates = Arrays.asList('C');
+        Map<Character, Map<Character, List<Character>>> transitions = Map.ofEntries(
+                Map.entry('S', Map.ofEntries(
+                        Map.entry('a', Arrays.asList('S','A'))
+                )),
+                Map.entry('A', Map.ofEntries(
+                        Map.entry('a', Arrays.asList('B')),
+                        Map.entry('b', Arrays.asList('A'))
+                )),
+                Map.entry('B', Map.ofEntries(
+                        Map.entry('a', Arrays.asList('S')),
+                        Map.entry('b', Arrays.asList('C'))
+                )),
+                Map.entry('C',
+                        Map.ofEntries()
+                )
+        );
+        FiniteAutomaton finiteAutomaton = new FiniteAutomaton(states, alphabet, transitions, 'S', finalStates);
+        finiteAutomaton.toRegularGrammar().printGrammar();
 //        Scanner scanner = new Scanner(System.in);
 //
 //
 //        for (int i = 0; i < 5; i++) {
 //            System.out.println("Generated string" + " " + (i + 1) + " : " + grammar.generateString());
 //        }
-        FiniteAutomaton finiteAutomaton = grammar.toFiniteAutomaton();
-        finiteAutomaton.toRegularGrammar().printGrammar();
 ////        finiteAutomaton.displayAutomaton();
 //        System.out.println(" ");
 //        System.out.println("Enter a string to check if it belongs to the language (or type 'exit' to quit): ");
