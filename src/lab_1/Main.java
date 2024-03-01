@@ -14,7 +14,8 @@ public class Main {
 //        for (int i = 0; i < 5; i++) {
 //            System.out.println("Generated string" + " " + (i + 1) + " : " + grammar.generateString());
 //        }
-//        FiniteAutomaton finiteAutomaton = grammar.toFiniteAutomaton();
+        FiniteAutomaton finiteAutomaton = grammar.toFiniteAutomaton();
+        finiteAutomaton.toRegularGrammar().printGrammar();
 ////        finiteAutomaton.displayAutomaton();
 //        System.out.println(" ");
 //        System.out.println("Enter a string to check if it belongs to the language (or type 'exit' to quit): ");
@@ -35,20 +36,20 @@ public class Main {
 //            }
 //        }
         //create new grammar
-        List<Character> Vn = Arrays.asList('S','B','C');
-        List<Character> Vt = Arrays.asList('a', 'b');
-        Map<String, List<String>> P = Map.ofEntries(
-                Map.entry("Sab", Arrays.asList("ba")),
-                Map.entry("A", Arrays.asList("S"))
-
-
-
-        );
-        Character S = 'S';
-        Grammar grammar2 = new Grammar(Vn, Vt, P, S);
-        int number = grammar2.classifyGrammar();
-        System.out.println(number);
-
+//        List<Character> Vn = Arrays.asList('S','B','C');
+//        List<Character> Vt = Arrays.asList('a', 'b');
+//        Map<String, List<String>> P = Map.ofEntries(
+//                Map.entry("Sab", Arrays.asList("ba")),
+//                Map.entry("A", Arrays.asList("S"))
+//
+//
+//
+//        );
+//        Character S = 'S';
+//        Grammar grammar2 = new Grammar(Vn, Vt, P, S);
+//        int number = grammar2.classifyGrammar();
+//        System.out.println(number);
+//
 
 
 //        scanner.close();

@@ -1,6 +1,7 @@
 package lab_1;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -63,6 +64,42 @@ public class FiniteAutomaton {
 
         // Check if the current state after processing the string is one of the final states
         return finalStates.contains(currentState);
+    }
+
+
+    public Grammar toRegularGrammar() {
+        Map<String, List<String>> productions = new HashMap<>();
+        List<Character> Vn = new ArrayList<>(states); // Non-terminals are the states
+        List<Character> Vt = new ArrayList<>(alphabet); // Terminals are the alphabet
+
+        // Convert FA transitions to Grammar productions
+        for (Character state : states) {
+            List<String> stateProductions = new ArrayList<>();
+
+            // Check if this state has any transitions
+            if (transitions.containsKey(state)) {
+                Map<Character, Character> stateTransitions = transitions.get(state);
+                for (Map.Entry<Character, Character> entry : stateTransitions.entrySet()) {
+                    char inputSymbol = entry.getKey();
+                    char nextState = entry.getValue();
+
+                    // Production: state -> inputSymbol nextState
+                    stateProductions.add(inputSymbol + Character.toString(nextState));
+                }
+            }
+
+            // If the state is a final state, add a production that produces the empty string
+            if (finalStates.contains(state)) {
+                stateProductions.add(""); // Represents ε-production
+            }
+
+            productions.put(state.toString(), stateProductions);
+        }
+
+        // The start symbol of the grammar is the start state of the FA
+        Character S = startState;
+
+        return new Grammar(Vn, Vt, productions, S);
     }
 
 }

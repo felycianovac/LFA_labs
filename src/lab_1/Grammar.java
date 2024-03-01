@@ -201,4 +201,19 @@ public class Grammar {
         return false;
     }
 
+    public void printGrammar() {
+        System.out.println("Non-terminals (Vn): " + Vn);
+        System.out.println("Terminals (Vt): " + Vt);
+        System.out.println("Start Symbol (S): " + S);
+        System.out.println("Production Rules (P):");
+        for (Map.Entry<String, List<String>> entry : P.entrySet()) {
+            String key = entry.getKey();
+            List<String> values = entry.getValue();
+            for (String value : values) {
+                System.out.println("  " + key + " -> " + value);
+            }
+        }
+    }
+
+
 }
