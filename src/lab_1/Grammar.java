@@ -1,5 +1,6 @@
 package lab_1;
 
+import java.sql.SQLOutput;
 import java.util.*;
 
 public class Grammar {
@@ -31,7 +32,14 @@ public class Grammar {
         // Set start symbol
         S = 'S';
     }
-//
+
+    public Grammar(List<Character> Vn, List<Character> Vt, Map<String, List<String>> P, Character S) {
+        this.Vn = Vn;
+        this.Vt = Vt;
+        this.P = P;
+        this.S = S;
+        this.random = new Random();
+    }
 
     public String generateString() {
         return generateString(S.toString());
@@ -97,44 +105,100 @@ public class Grammar {
         return new FiniteAutomaton(statesWithFinal, Vt, faTransitions, S, finalStates);
     }
 
-//    public Integer classifyGrammar(){
-//        int type3Pass = 0;
-//        int type2Pass = 0;
-//        int type1Pass = 0;
-//        int type0Pass = 0;
-//
-//        for (Map.Entry<Character, List<String>> entry : P.entrySet()) {
-//            Character key = entry.getKey(); // The non-terminal from the LHS
-//            List<String> values = entry.getValue(); // The list of productions for this non-terminal
-//
-//            for (String value : values) {
-//                // Count uppercase and lowercase characters in the production
-//                long uppercaseCount = value.chars().filter(Character::isUpperCase).count();
-//                long lowercaseCount = value.chars().filter(Character::isLowerCase).count();
-//
-//                // Type 3 (Regular Grammar) Check: Single non-terminal on LHS and at most one non-terminal on RHS
-//                if (uppercaseCount <= 1 && value.length() - uppercaseCount <= 1) {
-//                    type3Pass++;
-//                }
-//                // Type 2 (Context-Free Grammar) Check: Since LHS is always a single non-terminal, all productions pass by default
-//                else {
-//                    type2Pass++;
-//                }
-//
-//
-//        }
-//
-//        // Determine the grammar type based on the pass counts
-//        if (type0Pass > 0) {
-//            return 0; // Unrestricted
-//        } else if (type1Pass > 0) {
-//            return 1; // Context-Sensitive
-//        } else if (type2Pass > 0) {
-//            return 2; // Context-Free
-//        } else {
-//            return 3; // Regular
-//        }
-//    }
-// }
+    public Integer classifyGrammar() {
+        int type_2_passes = 0;
+        int type_1_passes = 0;
+        int type_0_passes = 0;
+
+        //check for linearity first
+        // I splited it because of the conflicts and the errors that sometimes occur when checking both right and left linear
+        boolean allProductionsAreRightLinear = true;
+        boolean allProductionsAreLeftLinear = true;
+
+        for (Map.Entry<String, List<String>> entry : P.entrySet()) {
+            for (String value : entry.getValue()) {
+                if (entry.getKey().length() == 1) {
+                    if (!isRightLinear(value)) {
+                        allProductionsAreRightLinear = false;
+                    }
+                    if (!isLeftLinear(value)) {
+                        allProductionsAreLeftLinear = false;
+                    }
+                }else {
+                    allProductionsAreRightLinear = false;
+                    allProductionsAreLeftLinear = false;
+                }
+            }
+        }
+
+        // If all productions consistently follow one linearity pattern, it's a regular grammar
+        if (allProductionsAreRightLinear || allProductionsAreLeftLinear) {
+            return 3; // Regular grammar
+        }
+        for (Map.Entry<String, List<String>> entry : P.entrySet()) {
+            String key = entry.getKey();
+            List<String> values = entry.getValue();
+
+            for (String value : values) {
+
+                if (isContextFreeGrammar(key)) {
+                    type_2_passes++;
+                }
+                else if (isContextSensitiveGrammar(key, value)) {
+                    type_1_passes++;
+                } else {
+                    type_0_passes++;
+                }
+            }
+        }
+
+        if (type_0_passes > 0) {
+            return 0;
+        } else if (type_1_passes > 0 ) {
+            return 1;
+        } else if (type_2_passes > 0) {
+            return 2;
+        }
+        return -1;
+    }
+
+
+    private boolean isContextSensitiveGrammar(String key, String value) {
+        return key.length() <=  value.length();
+    }
+
+    private boolean isContextFreeGrammar(String key) {
+        // Context-free grammars have a single non-terminal on the LHS, without restriction on the RHS.
+        return key.length() == 1 && Vn.contains(key.charAt(0));
+    }
+
+    private boolean isRightLinear( String value) {
+        if (value.isEmpty() || Vt.contains(value.charAt(0))) {
+            for (int i = 0; i < value.length() - 1; i++) {
+                if (!Vt.contains(value.charAt(i))) return false; // Non-terminal found before the last character
+            }
+            // Last character can be a non-terminal
+            return value.length() <= 1 || Vt.contains(value.charAt(value.length() - 1)) || Vn.contains(value.charAt(value.length() - 1));
+        }
+        if(value.length() == 1 && (Vt.contains(value.charAt(0)) || Vn.contains(value.charAt(0)))){
+            return true;
+        }
+        return false;
+    }
+
+
+    private boolean isLeftLinear(String value) {
+        if (value.isEmpty() || Vn.contains(value.charAt(0)) && value.length() == 1) return true;
+        if (value.length() > 1 && Vn.contains(value.charAt(0))) {
+            for (int i = 1; i < value.length(); i++) {
+                if (!Vt.contains(value.charAt(i))) return false; // Terminal found after the first character
+            }
+            return true; // First character is a non-terminal followed by terminals
+        }
+        if(value.length() == 1 && (Vt.contains(value.charAt(0)) || Vn.contains(value.charAt(0)))){
+            return true;
+        }
+        return false;
+    }
 
 }
