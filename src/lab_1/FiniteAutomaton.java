@@ -99,15 +99,95 @@ public class FiniteAutomaton {
             }
 
             if (finalStates.contains(state)) {
-                stateProductions.add("ε"); // ε-production for final states
+                stateProductions.add(""); // ε-production for final states
             }
 
             productions.put(state.toString(), stateProductions);
         }
 
         // Construct and return the Grammar object
-        // Assuming you have a constructor for Grammar that takes these parameters
         return new Grammar(new ArrayList<>(states), alphabet, productions, startState);
     }
 
+    public boolean is_dfa() {
+        // Check for ε (empty)-transitions first
+        for (Map.Entry<Character, Map<Character, List<Character>>> stateTransitionsEntry : transitions.entrySet()) {
+            for (Map.Entry<Character, List<Character>> transition : stateTransitionsEntry.getValue().entrySet()) {
+                // If any input symbol maps to more than one state, it's nondeterministic
+                if (transition.getValue().size() > 1) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public FiniteAutomaton nfa_to_dfa() {
+        // Map from NFA state sets to DFA state (Character)
+        Map<Set<Character>, Character> stateSetToDFAState = new HashMap<>();
+        // Inverse mapping to retrieve original NFA state sets
+        Map<Character, Set<Character>> dfaStateToStateSet = new HashMap<>();
+        List<Character> dfaStates = new ArrayList<>();
+        Map<Character, Map<Character, List<Character>>> dfaTransitions = new HashMap<>();
+        List<Character> dfaFinalStates = new ArrayList<>();
+        char nextStateName = 'A'; // Starting name for new DFA states
+
+        // Initial DFA state from the NFA start state
+        Set<Character> initialSet = new HashSet<>();
+        initialSet.add(startState);
+        stateSetToDFAState.put(initialSet, nextStateName);
+        dfaStateToStateSet.put(nextStateName, initialSet);
+        dfaStates.add(nextStateName);
+        Character dfaStartState = nextStateName;
+        nextStateName++;
+
+        Queue<Set<Character>> queue = new LinkedList<>();
+        queue.add(initialSet);
+
+        while (!queue.isEmpty()) {
+            Set<Character> currentSet = queue.poll();
+            Character currentState = stateSetToDFAState.get(currentSet);
+
+            Map<Character, List<Character>> transitionMap = new HashMap<>();
+            for (Character symbol : alphabet) {
+                Set<Character> nextSet = new HashSet<>();
+                for (Character state : currentSet) {
+                    List<Character> nextStates = transitions.getOrDefault(state, new HashMap<>()).get(symbol);
+                    if (nextStates != null) {
+                        nextSet.addAll(nextStates);
+                    }
+                }
+
+                // Create a new DFA state or use an existing one
+                Character nextState;
+                if (!stateSetToDFAState.containsKey(nextSet)) {
+                    nextState = nextStateName++;
+                    stateSetToDFAState.put(nextSet, nextState);
+                    dfaStateToStateSet.put(nextState, nextSet);
+                    dfaStates.add(nextState);
+                    queue.add(nextSet);
+                } else {
+                    nextState = stateSetToDFAState.get(nextSet);
+                }
+
+                // Update DFA transitions
+                transitionMap.putIfAbsent(symbol, new ArrayList<>());
+                transitionMap.get(symbol).add(nextState);
+            }
+
+            dfaTransitions.put(currentState, transitionMap);
+        }
+
+        // Identifying DFA final states
+        for (Map.Entry<Character, Set<Character>> entry : dfaStateToStateSet.entrySet()) {
+            for (Character finalState : finalStates) {
+                if (entry.getValue().contains(finalState)) {
+                    dfaFinalStates.add(entry.getKey());
+                    break;
+                }
+            }
+        }
+
+        return new FiniteAutomaton(dfaStates, alphabet, dfaTransitions, dfaStartState, dfaFinalStates);
+    }
 }
