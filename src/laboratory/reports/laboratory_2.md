@@ -195,4 +195,3 @@ In conclusion, I successfully applied the theoretical concepts acquired during l
 - **Finite Automata** - Accessed March 2, 2024. [https://drive.google.com/file/d/1rBGyzDN5eWMXTNeUxLxmKsf7tyhHt9Jk/view](https://drive.google.com/file/d/1rBGyzDN5eWMXTNeUxLxmKsf7tyhHt9Jk/view).
 - **How to use PlantUML with Java** - Accessed March 2, 2024. [https://plantuml.com/api](https://plantuml.com/api).
 
-- **Regular Language. Finite Automata** - Accessed February 15, 2024. [https://drive.google.com/file/d/1rBGyzDN5eWMXTNeUxLxmKsf7tyhHt9Jk/view](https://drive.google.com/file/d/1rBGyzDN5eWMXTNeUxLxmKsf7tyhHt9Jk/view).
