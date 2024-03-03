@@ -1,13 +1,5 @@
-package lab_1;
+package laboratory;
 
-import net.sourceforge.plantuml.SourceStringReader;
-import net.sourceforge.plantuml.style.ValueNull;
-
-import javax.swing.*;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;

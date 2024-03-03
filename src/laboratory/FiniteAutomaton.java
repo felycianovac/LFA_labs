@@ -1,5 +1,7 @@
-package lab_1;
+package laboratory;
 import net.sourceforge.plantuml.SourceStringReader;
+
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -223,7 +225,9 @@ public class FiniteAutomaton {
         }
         source += "@enduml\n";
 
-        try (OutputStream png = new FileOutputStream("finite_automaton.png")) {
+
+        try (OutputStream png = new FileOutputStream("images"+ File.separator +"generated_finite_automaton.png")) {
+
             SourceStringReader reader = new SourceStringReader(source);
             String desc = reader.generateImage(png);
             if (desc != null) {
