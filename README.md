@@ -9,6 +9,6 @@
 **Professors:** Dumitru Crețu, Irina Cojuhari
 
 ## Table of Contents
-- [Lab Assigment 1](src/laboratory/README.md)
+- [Lab Assigment 1](src/laboratory/reports/laboratory_1.md)
 
 

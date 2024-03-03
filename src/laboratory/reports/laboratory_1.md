@@ -81,7 +81,7 @@ faTransitions.get(state).put(input, nextState);
 In order to implement the next task which is checking the word belongness to the language via FA, I have created the following `graph representation` to  better visualize how everything should work. Basically we receive a word as input, and we go through each letter (symbol) and try get to the final state, without any errors. So if we receive an input as *kitty*, we analyze the word letter by letter, and try to apply each symbol as a parameter to the current state, but this example obviously does not this in our language.
 
 <p align="center">
-  <img src="../../images/FA-graph-17.png" alt="Finite Automaton Graph" width="400"/>
+  <img src="../../../images/FA-graph-17.png" alt="Finite Automaton Graph" width="400"/>
   <br>
   <em>Figure 1. Finite Automaton Visualization V. 17</em>
 </p>
