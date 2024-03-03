@@ -104,15 +104,18 @@ public class Grammar {
     }
 
     public Integer classifyGrammar() {
+        //flags to keep track of each production type
         int type_2_passes = 0;
         int type_1_passes = 0;
         int type_0_passes = 0;
 
         //check for linearity first
-        // I splited it because of the conflicts and the errors that sometimes occur when checking both right and left linear
+        // If all productions are consistently right or left linear, it's a regular grammar
+        //flags to keep track of each production type
         boolean allProductionsAreRightLinear = true;
         boolean allProductionsAreLeftLinear = true;
 
+        //iterate through the production rules and check the production linearity for each
         for (Map.Entry<String, List<String>> entry : P.entrySet()) {
             for (String value : entry.getValue()) {
                 if (entry.getKey().length() == 1) {
@@ -123,6 +126,7 @@ public class Grammar {
                         allProductionsAreLeftLinear = false;
                     }
                 }else {
+                    //if the lhs of the rule is not a single non-terminal, then the grammar is not regular
                     allProductionsAreRightLinear = false;
                     allProductionsAreLeftLinear = false;
                 }
@@ -133,6 +137,7 @@ public class Grammar {
         if (allProductionsAreRightLinear || allProductionsAreLeftLinear) {
             return 3; // Regular grammar
         }
+        //iterate through the production rules and check the production of the remaining types
         for (Map.Entry<String, List<String>> entry : P.entrySet()) {
             String key = entry.getKey();
             List<String> values = entry.getValue();
@@ -150,6 +155,8 @@ public class Grammar {
             }
         }
 
+        //if at least one production is of type 0, then the grammar is of type 0
+        // bring it in the reversed order of the type checking because we first check for type 2, then type 1, and finally type 0
         if (type_0_passes > 0) {
             return 0;
         } else if (type_1_passes > 0 ) {
@@ -190,17 +197,18 @@ public class Grammar {
     }
 
     private boolean isRightLinear(String value) {
-        if((value.length()==2 && (value.charAt(1) == 'ε' && Vn.contains(value.charAt(0)))) )
+        //if the production has the rhs of length 1 then it can be either terminal or non-terminal, or even ε
+        if(value.length() == 1 && (Vt.contains(value.charAt(0)) || Vn.contains(value.charAt(0)) || value.charAt(0)=='ε')){
             return true;
+        }
+        //the valid cases for right linear grammar will be if the production is of the form A->aB or A->a and A->ε, A->εA is allowed as well
         if (value.equals("ε") || Vt.contains(value.charAt(0)) || value.charAt(0)=='ε') {
+            //iterate over the entire string, and check if the non-terminal is at the end of the string
             for (int i = 0; i < value.length() - 1; i++) {
                 if (!Vt.contains(value.charAt(i)) && value.charAt(i)!='ε') return false; // Non-terminal found before the last character
             }
-            // Last character can be a non-terminal
+            // Last character can be a non-terminal as well as terminal, there are no restrictions
             return value.length() <= 1 || Vt.contains(value.charAt(value.length() - 1)) || Vn.contains(value.charAt(value.length() - 1)) ;
-        }
-        if(value.length() == 1 && (Vt.contains(value.charAt(0)) || Vn.contains(value.charAt(0)) || value.charAt(0)=='ε')){
-            return true;
         }
 
         return false;
@@ -208,17 +216,19 @@ public class Grammar {
 
 
     private boolean isLeftLinear(String value) {
-
-        if (value.equals("ε") || Vn.contains(value.charAt(0)) && (value.length() == 1 || value.length()==2 && value.charAt(1)=='ε')) return true;
-        if (value.length() > 1 && Vn.contains(value.charAt(0)) || value.charAt(0)=='ε') {
+        //if the production has the rhs of length 1 then it can be either terminal or non-terminal, or even ε
+        if(value.length() == 1 && (Vt.contains(value.charAt(0)) || Vn.contains(value.charAt(0)) || value.charAt(0)=='ε')){
+            return true;
+        }
+        //the valid cases for left linear grammar will be if the production is of the form A->Ba or A->a and A->ε, A->Aε is allowed as well
+        if (value.length() > 1 && Vn.contains(value.charAt(0)) || value.charAt(0)=='ε' ) {
+            //iterate over the entire string, and check if the non-terminal is at the start of the string
             for (int i = 1; i < value.length(); i++) {
                 if (!Vt.contains(value.charAt(i))) return false; // Terminal found after the first character
             }
             return true; // First character is a non-terminal followed by terminals
         }
-        if(value.length() == 1 && (Vt.contains(value.charAt(0)) || Vn.contains(value.charAt(0)))){
-            return true;
-        }
+
         return false;
     }
 
