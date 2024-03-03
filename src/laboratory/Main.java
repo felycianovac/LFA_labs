@@ -33,17 +33,17 @@ public class Main {
 //        System.out.println("The given grammar is of the type " + grammar.classifyGrammar());
 
 
-        List<Character> Vn = Arrays.asList('A', 'B');
-        List<Character> Vt = Arrays.asList('b', 'c');
-        Map<String, List<String>> P = Map.ofEntries(
-                Map.entry("A", Arrays.asList("AbBc")),
-                Map.entry("AB", Arrays.asList("aB", "bA")),
-                Map.entry("B", Arrays.asList("b"))
-        );
-        Character S = 'S';
-        Grammar grammar = new Grammar(Vn, Vt, P, S);
-        grammar.printGrammar();
-        System.out.println("The given grammar is of the type " + grammar.classifyGrammar());
+//        List<Character> Vn = Arrays.asList('A', 'B');
+//        List<Character> Vt = Arrays.asList('b', 'c');
+//        Map<String, List<String>> P = Map.ofEntries(
+//                Map.entry("A", Arrays.asList("AbBc")),
+//                Map.entry("AB", Arrays.asList("aB", "bA")),
+//                Map.entry("B", Arrays.asList("b"))
+//        );
+//        Character S = 'S';
+//        Grammar grammar = new Grammar(Vn, Vt, P, S);
+//        grammar.printGrammar();
+//        System.out.println("The given grammar is of the type " + grammar.classifyGrammar());
 
 //        List<Character> Vn = Arrays.asList('S', 'B', 'C');
 //        List<Character> Vt = Arrays.asList('a', 'b');
@@ -83,18 +83,15 @@ public class Main {
         );
 //
         FiniteAutomaton finiteAutomaton = new FiniteAutomaton(states, alphabet, transitions, startState, finalStates);
-//        finiteAutomaton.nfa_to_dfa().generatePngRepresentation();
 //        System.out.println("The given finite automaton has the following grammar:");
 //        finiteAutomaton.toRegularGrammar().printGrammar();
 //        finiteAutomaton.displayAutomaton();
-//        finiteAutomaton.is_dfa();
 //        if (finiteAutomaton.is_dfa()){
 //            System.out.println("The given finite automaton is a DFA");
 //        } else {
 //            System.out.println("The given finite automaton is a NFA");
 //        }
-//        System.out.println("The given finite automaton has the following DFA structure:");
-        finiteAutomaton.nfa_to_dfa().generatePngRepresentation();
+        finiteAutomaton.nfa_to_dfa().displayAutomaton();
 
 //        finiteAutomaton.generatePngRepresentation();
 
