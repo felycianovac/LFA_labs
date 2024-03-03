@@ -1,5 +1,8 @@
 package lab_1;
-
+import net.sourceforge.plantuml.SourceStringReader;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.*;
 
 public class FiniteAutomaton {
@@ -8,6 +11,7 @@ public class FiniteAutomaton {
     Map<Character, Map<Character, List<Character>>> transitions;
     Character startState;
     List<Character> finalStates;
+
     public FiniteAutomaton(List<Character> states, List<Character> alphabet, Map<Character, Map<Character, List<Character>>> transitions, Character startState, List<Character> finalStates) {
         this.states = new ArrayList<>(states);
         this.alphabet = new ArrayList<>(alphabet);
@@ -17,6 +21,7 @@ public class FiniteAutomaton {
         // Add an explicit final state 'F' to represent acceptance for productions ending in terminal symbols
         this.states = new ArrayList<>(states);
     }
+
     public void displayAutomaton() {
         System.out.println("Finite Automaton Structure:");
         System.out.println("States: " + states);
@@ -123,23 +128,19 @@ public class FiniteAutomaton {
     }
 
     public FiniteAutomaton nfa_to_dfa() {
-        // Map from NFA state sets to DFA state (Character)
         Map<Set<Character>, Character> stateSetToDFAState = new HashMap<>();
-        // Inverse mapping to retrieve original NFA state sets
         Map<Character, Set<Character>> dfaStateToStateSet = new HashMap<>();
         List<Character> dfaStates = new ArrayList<>();
         Map<Character, Map<Character, List<Character>>> dfaTransitions = new HashMap<>();
         List<Character> dfaFinalStates = new ArrayList<>();
-        char nextStateName = 'A'; // Starting name for new DFA states
+        char nextStateName = 'A';
 
-        // Initial DFA state from the NFA start state
         Set<Character> initialSet = new HashSet<>();
         initialSet.add(startState);
         stateSetToDFAState.put(initialSet, nextStateName);
         dfaStateToStateSet.put(nextStateName, initialSet);
         dfaStates.add(nextStateName);
-        Character dfaStartState = nextStateName;
-        nextStateName++;
+        Character dfaStartState = nextStateName++;
 
         Queue<Set<Character>> queue = new LinkedList<>();
         queue.add(initialSet);
@@ -158,27 +159,26 @@ public class FiniteAutomaton {
                     }
                 }
 
-                // Create a new DFA state or use an existing one
-                Character nextState;
-                if (!stateSetToDFAState.containsKey(nextSet)) {
-                    nextState = nextStateName++;
-                    stateSetToDFAState.put(nextSet, nextState);
-                    dfaStateToStateSet.put(nextState, nextSet);
-                    dfaStates.add(nextState);
-                    queue.add(nextSet);
-                } else {
-                    nextState = stateSetToDFAState.get(nextSet);
+                if (!nextSet.isEmpty()) {
+                    Character nextState;
+                    if (!stateSetToDFAState.containsKey(nextSet)) {
+                        nextState = nextStateName++;
+                        stateSetToDFAState.put(nextSet, nextState);
+                        dfaStateToStateSet.put(nextState, nextSet);
+                        dfaStates.add(nextState);
+                        queue.add(nextSet);
+                    } else {
+                        nextState = stateSetToDFAState.get(nextSet);
+                    }
+                    transitionMap.putIfAbsent(symbol, new ArrayList<>());
+                    transitionMap.get(symbol).add(nextState);
                 }
-
-                // Update DFA transitions
-                transitionMap.putIfAbsent(symbol, new ArrayList<>());
-                transitionMap.get(symbol).add(nextState);
             }
-
-            dfaTransitions.put(currentState, transitionMap);
+            if (!transitionMap.isEmpty()) {
+                dfaTransitions.put(currentState, transitionMap);
+            }
         }
 
-        // Identifying DFA final states
         for (Map.Entry<Character, Set<Character>> entry : dfaStateToStateSet.entrySet()) {
             for (Character finalState : finalStates) {
                 if (entry.getValue().contains(finalState)) {
@@ -189,5 +189,50 @@ public class FiniteAutomaton {
         }
 
         return new FiniteAutomaton(dfaStates, alphabet, dfaTransitions, dfaStartState, dfaFinalStates);
+    }
+
+    public void generatePngRepresentation() {
+        String source = "@startuml\n";
+        source += "hide empty description\n";
+
+        // Define states and mark final states
+        for (Character state : states) {
+            if (finalStates.contains(state)) {
+                source += "state \"" + state + "\" as " + state + " <<final>>\n";
+            } else {
+                source += "state \"" + state + "\" as " + state + "\n";
+            }
+        }
+
+        // Initial state arrow
+        source += "[*] --> " + startState + "\n";
+
+        // Define transitions
+        for (Map.Entry<Character, Map<Character, List<Character>>> entry : transitions.entrySet()) {
+            Character fromState = entry.getKey();
+            for (Map.Entry<Character, List<Character>> trans : entry.getValue().entrySet()) {
+                Character symbol = trans.getKey();
+                for (Character toState : trans.getValue()) {
+                    source += fromState + " --> " + toState + " : " + symbol + "\n";
+                }
+            }
+        }
+
+        for (Character state : finalStates) {
+            source += state + " --> [*]\n";
+        }
+        source += "@enduml\n";
+
+        try (OutputStream png = new FileOutputStream("finite_automaton.png")) {
+            SourceStringReader reader = new SourceStringReader(source);
+            String desc = reader.generateImage(png);
+            if (desc != null) {
+                System.out.println("Image saved as finite_automaton.png");
+            } else {
+
+                System.out.println("Failed to generate image.");
+            }
+        } catch (IOException e) {
+        }
     }
 }

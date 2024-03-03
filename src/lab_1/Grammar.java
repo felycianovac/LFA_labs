@@ -1,6 +1,5 @@
 package lab_1;
 
-import java.sql.SQLOutput;
 import java.util.*;
 
 public class Grammar {
@@ -163,8 +162,27 @@ public class Grammar {
 
 
     private boolean isContextSensitiveGrammar(String key, String value) {
-        return key.length() <=  value.length();
+        // Check for ε-production from a non-start symbol
+        if (value.isEmpty() && !key.equals(S.toString())) {
+            // This makes the grammar Type 0 if there's an empty production from a non-start symbol
+            return false;
+        }
+
+        if (key.equals(S.toString()) && value.isEmpty()) {
+            // Special case for start symbol producing ε is allowed for Type 1,
+            // but only if the start symbol doesn't appear on the RHS of any production.
+            for (List<String> values : P.values()) {
+                for (String val : values) {
+                    if (val.contains(S.toString())) return false;
+                }
+            }
+            return true;
+        }
+
+        // General case for Context-Sensitive Grammar: RHS length >= LHS length
+        return key.length() <= value.length();
     }
+
 
     private boolean isContextFreeGrammar(String key) {
         // Context-free grammars have a single non-terminal on the LHS, without restriction on the RHS.
@@ -213,6 +231,8 @@ public class Grammar {
             }
         }
     }
+
+
 
 
 }
