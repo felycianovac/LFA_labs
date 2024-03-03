@@ -163,12 +163,12 @@ public class Grammar {
 
     private boolean isContextSensitiveGrammar(String key, String value) {
         // Check for ε-production from a non-start symbol
-        if (value.isEmpty() && !key.equals(S.toString())) {
+        if (value.equals("ε") && !key.equals(S.toString())) {
             // This makes the grammar Type 0 if there's an empty production from a non-start symbol
             return false;
         }
 
-        if (key.equals(S.toString()) && value.isEmpty()) {
+        if (key.equals(S.toString()) && value.equals("ε")) {
             // Special case for start symbol producing ε is allowed for Type 1,
             // but only if the start symbol doesn't appear on the RHS of any production.
             for (List<String> values : P.values()) {
@@ -189,24 +189,28 @@ public class Grammar {
         return key.length() == 1 && Vn.contains(key.charAt(0));
     }
 
-    private boolean isRightLinear( String value) {
-        if (value.isEmpty() || Vt.contains(value.charAt(0))) {
+    private boolean isRightLinear(String value) {
+        if((value.length()==2 && (value.charAt(1) == 'ε' && Vn.contains(value.charAt(0)))) )
+            return true;
+        if (value.equals("ε") || Vt.contains(value.charAt(0)) || value.charAt(0)=='ε') {
             for (int i = 0; i < value.length() - 1; i++) {
-                if (!Vt.contains(value.charAt(i))) return false; // Non-terminal found before the last character
+                if (!Vt.contains(value.charAt(i)) && value.charAt(i)!='ε') return false; // Non-terminal found before the last character
             }
             // Last character can be a non-terminal
-            return value.length() <= 1 || Vt.contains(value.charAt(value.length() - 1)) || Vn.contains(value.charAt(value.length() - 1));
+            return value.length() <= 1 || Vt.contains(value.charAt(value.length() - 1)) || Vn.contains(value.charAt(value.length() - 1)) ;
         }
-        if(value.length() == 1 && (Vt.contains(value.charAt(0)) || Vn.contains(value.charAt(0)))){
+        if(value.length() == 1 && (Vt.contains(value.charAt(0)) || Vn.contains(value.charAt(0)) || value.charAt(0)=='ε')){
             return true;
         }
+
         return false;
     }
 
 
     private boolean isLeftLinear(String value) {
-        if (value.isEmpty() || Vn.contains(value.charAt(0)) && value.length() == 1) return true;
-        if (value.length() > 1 && Vn.contains(value.charAt(0))) {
+
+        if (value.equals("ε") || Vn.contains(value.charAt(0)) && (value.length() == 1 || value.length()==2 && value.charAt(1)=='ε')) return true;
+        if (value.length() > 1 && Vn.contains(value.charAt(0)) || value.charAt(0)=='ε') {
             for (int i = 1; i < value.length(); i++) {
                 if (!Vt.contains(value.charAt(i))) return false; // Terminal found after the first character
             }

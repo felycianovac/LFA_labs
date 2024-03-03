@@ -106,7 +106,7 @@ public class FiniteAutomaton {
             }
 
             if (finalStates.contains(state)) {
-                stateProductions.add(""); // ε-production for final states
+                stateProductions.add("ε"); // ε-production for final states
             }
 
             productions.put(state.toString(), stateProductions);
@@ -121,7 +121,7 @@ public class FiniteAutomaton {
         for (Map.Entry<Character, Map<Character, List<Character>>> stateTransitionsEntry : transitions.entrySet()) {
             for (Map.Entry<Character, List<Character>> transition : stateTransitionsEntry.getValue().entrySet()) {
                 // If any input symbol maps to more than one state, it's nondeterministic
-                if (transition.getValue().size() > 1) {
+                if (transition.getValue().size() > 1 || transition.getValue().toString().equals("ε") ) {
                     return false;
                 }
             }
@@ -137,15 +137,14 @@ public class FiniteAutomaton {
         List<Character> dfaFinalStates = new ArrayList<>();
         char nextStateName = 'A';
 
-        Set<Character> initialSet = new HashSet<>();
-        initialSet.add(startState);
-        stateSetToDFAState.put(initialSet, nextStateName);
-        dfaStateToStateSet.put(nextStateName, initialSet);
+        Set<Character> initialClosure = epsilonClosure(startState, transitions);
+        stateSetToDFAState.put(initialClosure, nextStateName);
+        dfaStateToStateSet.put(nextStateName, initialClosure);
         dfaStates.add(nextStateName);
         Character dfaStartState = nextStateName++;
 
         Queue<Set<Character>> queue = new LinkedList<>();
-        queue.add(initialSet);
+        queue.add(initialClosure);
 
         while (!queue.isEmpty()) {
             Set<Character> currentSet = queue.poll();
@@ -153,11 +152,16 @@ public class FiniteAutomaton {
 
             Map<Character, List<Character>> transitionMap = new HashMap<>();
             for (Character symbol : alphabet) {
+                if (symbol.toString().equals("ε")) continue; // Skip ε-transitions for DFA
+
                 Set<Character> nextSet = new HashSet<>();
                 for (Character state : currentSet) {
-                    List<Character> nextStates = transitions.getOrDefault(state, new HashMap<>()).get(symbol);
-                    if (nextStates != null) {
-                        nextSet.addAll(nextStates);
+                    Set<Character> closure = epsilonClosure(state, transitions);
+                    for (Character closureState : closure) {
+                        List<Character> nextStates = transitions.getOrDefault(closureState, new HashMap<>()).getOrDefault(symbol, new ArrayList<>());
+                        for (Character nextState : nextStates) {
+                            nextSet.addAll(epsilonClosure(nextState, transitions));
+                        }
                     }
                 }
 
@@ -176,11 +180,10 @@ public class FiniteAutomaton {
                     transitionMap.get(symbol).add(nextState);
                 }
             }
-            if (!transitionMap.isEmpty()) {
-                dfaTransitions.put(currentState, transitionMap);
-            }
+            dfaTransitions.put(currentState, transitionMap);
         }
 
+        // Identify final states in DFA
         for (Map.Entry<Character, Set<Character>> entry : dfaStateToStateSet.entrySet()) {
             for (Character finalState : finalStates) {
                 if (entry.getValue().contains(finalState)) {
@@ -191,6 +194,28 @@ public class FiniteAutomaton {
         }
 
         return new FiniteAutomaton(dfaStates, alphabet, dfaTransitions, dfaStartState, dfaFinalStates);
+    }
+
+
+    // Method to compute ε-closure for a set of states
+    private Set<Character> epsilonClosure(Character state, Map<Character, Map<Character, List<Character>>> transitions) {
+        Set<Character> closure = new HashSet<>();
+        Stack<Character> stack = new Stack<>();
+        stack.push(state);
+
+        while (!stack.isEmpty()) {
+            Character currentState = stack.pop();
+            closure.add(currentState);
+
+            List<Character> epsilonTransitions = transitions.getOrDefault(currentState, new HashMap<>()).getOrDefault('ε', new ArrayList<>());
+            for (Character nextState : epsilonTransitions) {
+                if (!closure.contains(nextState)) {
+                    stack.push(nextState);
+                }
+            }
+        }
+
+        return closure;
     }
 
     public void generatePngRepresentation() {
