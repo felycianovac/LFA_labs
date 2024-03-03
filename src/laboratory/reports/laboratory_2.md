@@ -119,13 +119,80 @@ After a long research and several trials of implementing Java libraries for plot
 ## Conclusions / Screenshots / Results
 
 ### Grammar Type Identification
-I've tested the implementation on all four types of Grammar
+I've tested the implementation on all four types of Grammars, and below are presented the results from the console:
 Type 3                     |Type 2                     |Type 1                     |Type 0                    |
 :-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:
-![](https://raw.githubusercontent.com/LFA_labs/images/type_3.png)  |  ![](https://...Ocean.png) | ![](https://...Dark.png)  | ![](https://...Dark.png) |
+![](https://github.com/felycianovac/LFA_labs/blob/main/images/type_3.png)  |  ![](https://github.com/felycianovac/LFA_labs/blob/main/images/type_2.png) | ![](https://github.com/felycianovac/LFA_labs/blob/main/images/type_1.png)  | ![](https://github.com/felycianovac/LFA_labs/blob/main/images/type_0.png) |
+
+<p align="center">
+  <strong>Table 1.</strong> Grammar Type Identification Results
+</p>
+
+### FA conversion to Regular Grammar
+For convenience, and by following Open-Closed Principle, I've decided to replace the q_n from the variants with uppercase letters. So, in my case *S=q0*, *A=q1*, *B=q2*, *C=q3*, and the resulting Regular Grammar for the given Automaton in variant 17 will be:
+
+```
+Non-terminals (Vn): [S, A, B, C]
+Terminals (Vt): [a, b]
+Start Symbol (S): S
+Production Rules (P):
+  A -> bA
+  A -> aB
+  B -> bC
+  B -> aS
+  S -> aS
+  S -> aA
+  C -> ε
+```
+### NFA vs DFA identification
+For displaying the results of the method is_dfa(), I've written a short if-else statement for convenience, and below are presented the results for my variant:
+```
+Finite Automaton Structure:
+States: [S, A, B, C]
+Alphabet: [a, b]
+Start State: S
+Final States: [C]
+Transitions: 
+    B --(b)--> C
+    B --(a)--> S
+    A --(b)--> A
+    A --(a)--> B
+    S --(a)--> S
+    S --(a)--> A
+The given finite automaton is a NFA
+```
+
+### NFA to DFA conversion & Graph Representation
+I have used the helper function from the previous laboratory work for displaying the converted automaton, and here is what I've got:
+```
+Finite Automaton Structure:
+States: [A, B, C, D, E, F, G]
+Alphabet: [a, b]
+Start State: A
+Final States: [E, G]
+Transitions: 
+    A --(a)--> B
+    B --(a)--> C
+    B --(b)--> D
+    C --(a)--> C
+    C --(b)--> E
+    D --(a)--> F
+    D --(b)--> D
+    E --(a)--> F
+    E --(b)--> D
+    F --(a)--> A
+    F --(b)--> G
+```
+Also, for visually analyze the resulting DFA, see Figure 1 presented above.
 
 
-As a conclusion, I managed to transpose the theoretical stuff learned at the lectures into code and construct my own language based on `Grammar` provided by the variant, and made the conversion of it to `FA`. Also, I fulfilled the given tasks of constructing the two classes, and the respective methods that they hold. I've also got an important point about the conversion to FA, as it is only valid for regular grammars (type 3). Overall, this laboratory work was insightful and made me understand better the basics of the FA and Grammars.
+
+In conclusion, I successfully applied the theoretical concepts acquired during lectures by translating them into practical code implementations. This included developing my own Chomsky classification system, converting finite automata to regular grammars, identifying NFAs, and transforming NFAs to DFAs, with the inclusion of special handling for ε-NFAs. Additionally, I utilized PlantUML for the graphical representation of the automata and learned how to manage the plantUML scripts directly from java code. Overall this laboratory work proved to be enlightening, prompting a deeper exploration into the realms of Finite Automata and Grammars.
 
 
 ## References
+- **Chomsky Classification of Grammars** - Accessed March 1, 2024. [https://www.tutorialspoint.com/automata_theory/chomsky_classification_of_grammars.htm](https://www.tutorialspoint.com/automata_theory/chomsky_classification_of_grammars.htm).
+- **Finite Automata** - Accessed March 2, 2024. [https://drive.google.com/file/d/1rBGyzDN5eWMXTNeUxLxmKsf7tyhHt9Jk/view](https://drive.google.com/file/d/1rBGyzDN5eWMXTNeUxLxmKsf7tyhHt9Jk/view).
+- **How to use PlantUML with Java** - Accessed March 2, 2024. [https://plantuml.com/api](https://plantuml.com/api).
+
+- **Regular Language. Finite Automata** - Accessed February 15, 2024. [https://drive.google.com/file/d/1rBGyzDN5eWMXTNeUxLxmKsf7tyhHt9Jk/view](https://drive.google.com/file/d/1rBGyzDN5eWMXTNeUxLxmKsf7tyhHt9Jk/view).
