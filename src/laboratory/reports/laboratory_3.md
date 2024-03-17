@@ -18,20 +18,26 @@ These so called tokens are small units that carry meaning and are essential for 
 * Get familiar with the inner workings of a lexer/scanner/tokenizer.
 * Implement a sample lexer and show how it works.
 
-
 ## Implementation description
 I've decided to create a sample Tokenizer for the ELSD project, which is a DSL for image processing. Despite the fact that it was implemented within the project using ANTLR, I tried to do it on my own in the way I see it, with the use of example from [1]. 
 
 The code within the lab is an implementation of a tokenizer class in Java. This class has a method called tokenize(String input). The method uses regular expressions to identify tokens in the input string, and returns a list of Token objects.
 
-The Tokenizer class contains a constant String `TOKEN_REGEX`, which represents all possible token names that can be identified by the tokenizer, splitter with the use of OR operator. It also contains several constant regular expressions, one for each type of token that can be identified. These regular expressions are used to match tokens in the input string.
+The Tokenizer class contains a constant String `TOKEN_REGEX`, which represents all possible token names that can be identified by the tokenizer, splitted with the use of OR operator. It also contains several constant regular expressions, one for each type of token that can be identified. These regular expressions are used to match tokens in the input string and were constructed based on the Grammar definition within the DSL. 
 
-The tokenize method creates a new ArrayList of Token objects to hold the tokens found in the input string. It then creates a Matcher object using the Pattern constant created from the regular expressions. The method then iterates over the input string, using the Matcher object to find matches for the regular expressions. For each match found, the method identifies Token Type by using a helper method `determineTokenType(String value)`, and creates a new Token object with its corresponding type and value, and adds it to the list of tokens.
+The tokenize method creates a new ArrayList of Token objects to hold the tokens found in the input string. It then creates a Matcher object using the Pattern constant created from the regular expressions. The method then iterates over the input string, using the Matcher object to find matches for the regular expressions. For each match found, the method identifies Token Type by using a helper method `determineTokenType(String value)`, and creates a new Token object with its corresponding type and value, and adds it to the list of tokens. It is worthy to mention that I've additionally taken into account the index of the tokens being processed while tokenizing, in order to meaningfully handle errors regarding the unmatched patterns. So, I've basically compared the position where a token match is found against the position it last stopped at. If there's a gap, meaning some input hasn't matched any token pattern, I report the error using an additional helper method `reportError(String value)`. Also, as the quotations are defined within our language as limits of file/folder paths, I manually extract the quotations from those tokens and place them as separate ones, and also place the paths without the quotations (beginning and end of the substring) for convenience in future work.
 
 Finally, the tokenize method returns the list of Token objects.
+
+## Conclusions / Screenshots / Results
+In order to "simulate" the DSL in function, I take the input commands from the console, and I'll provide some screenshots with valid & invalid input prompts and the corresponding results.
+I've tested the implementation on all four types of Grammars, and below are presented the results from the console:
+Type 3                     |Type 2                     |Type 1                     |Type 0                    |
+:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:
+![](https://github.com/felycianovac/LFA_labs/blob/main/images/type_3.png)  |  ![](https://github.com/felycianovac/LFA_labs/blob/main/images/type_2.png) | ![](https://github.com/felycianovac/LFA_labs/blob/main/images/type_1.png)  | ![](https://github.com/felycianovac/LFA_labs/blob/main/images/type_0.png) |
 
 
 
 ## References
-- **A Sample of a Lexer Implementation** - Accessed March 13, 2024. [https://www.tutorialspoint.com/automata_theory/chomsky_classification_of_grammars.htm]([https://llvm.org/docs/tutorial/MyFirstLanguageFrontend/LangImpl01.html](https://llvm.org/docs/tutorial/MyFirstLanguageFrontend/LangImpl01.html).
+- **A Sample of a Lexer Implementation** - Accessed March 13, 2024. [https://llvm.org/docs/tutorial/MyFirstLanguageFrontend/LangImpl01.html](https://llvm.org/docs/tutorial/MyFirstLanguageFrontend/LangImpl01.html).
 
