@@ -11,6 +11,7 @@
 ## Table of Contents
 - [Lab Assigment 1](src/laboratory/reports/laboratory_1.md)
 - [Lab Assigment 2](src/laboratory/reports/laboratory_2.md)
+- [Lab Assigment 3](src/laboratory/reports/laboratory_3.md)
 
 
 
