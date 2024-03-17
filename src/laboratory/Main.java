@@ -22,6 +22,17 @@ public class Main {
         }
 
     }
+    /*
+    Valid commands:
+    crop --img="image.png" --x=10 --y=20 --w=100 --h=200
+    convert --img="image.png" --format="jpg"
+    rotate --img="folder\path" --deg=90
+
+
+    Invalid commands:
+    rotate --img="image.png" --degrees=90
+    please resize my --img="image.png" ^-^
+     */
 
 
 }

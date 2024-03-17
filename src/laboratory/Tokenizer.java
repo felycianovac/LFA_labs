@@ -12,7 +12,7 @@ public class Tokenizer {
     private static final String FILE_PATH_REGEX ="\"[^\"]+\\.(png|jpg|bmp|gif)\""; // Specific for file paths with extension
     private static final String FOLDER_PATH_REGEX = "\"(?!.*\\.(png|jpg|bmp|gif)$)[^\"]+\"";
     private static final String IMAGE_TYPE_REGEX = "\"(png|jpg|bmp|gif)\"";
-    private static final String PARAMETER_REGEX = "--(x|y|w|h|degrees|lvl|img|format)\\b";
+    private static final String PARAMETER_REGEX = "--(x|y|w|h|deg|lvl|img|format)\\b";
     private static final String COMMAND_REGEX = "\\b(crop|convert|rotate|flipX|flipY|bw|resize|contrast|brightness|negative|colorize|blur|sharpen|compress|ft|threshold)";
 
     private static final String TOKEN_REGEX = String.join("|",
