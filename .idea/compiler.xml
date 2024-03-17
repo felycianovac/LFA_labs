@@ -9,9 +9,5 @@
         <module name="LFA" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="LFA_labs" target="1.8" />
-      <module name="your-artifact-id" target="11" />
-    </bytecodeTargetLevel>
   </component>
 </project>
