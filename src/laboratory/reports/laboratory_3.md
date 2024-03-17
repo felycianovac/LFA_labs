@@ -31,13 +31,27 @@ Finally, the tokenize method returns the list of Token objects.
 
 ## Conclusions / Screenshots / Results
 In order to "simulate" the DSL in function, I take the input commands from the console, and I'll provide some screenshots with valid & invalid input prompts and the corresponding results.
-I've tested the implementation on all four types of Grammars, and below are presented the results from the console:
-Type 3                     |Type 2                     |Type 1                     |Type 0                    |
-:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:
-![](https://github.com/felycianovac/LFA_labs/blob/main/images/type_3.png)  |  ![](https://github.com/felycianovac/LFA_labs/blob/main/images/type_2.png) | ![](https://github.com/felycianovac/LFA_labs/blob/main/images/type_1.png)  | ![](https://github.com/felycianovac/LFA_labs/blob/main/images/type_0.png) |
+
+As it can be seen from Table 1 and compared to the Grammar from [2], the only *parts* of the input that are being added to the List of Token objects, are those defined within the *grammar* and *regex*.
+
+|                      Valid Input Prompts                      |                      Invalid Input Prompts                      |
+|:-------------------------------------------------------------:|:-----------------------------------------------------------------:|
+| <img src="https://github.com/felycianovac/LFA_labs/blob/main/images/valid1.png" width="300"> <img src="https://github.com/felycianovac/LFA_labs/blob/main/images/valid2.png" width="300"> | <img src="https://github.com/felycianovac/LFA_labs/blob/main/images/invalid1.png" width="300"> <img src="https://github.com/felycianovac/LFA_labs/blob/main/images/invalid2.png" width="300"> |
+<p align="center">
+  <strong>Table 1.</strong> Tokenizer in Action
+</p>
+
+
+In conclusion, I've managed to understand the essence of Lexical Analysis, how to implement it and perform an accurate tokenization with corresponding error validation. It took relatively much time when reviewing all possible input prompts and trying to overcome some possible issues that might occur (hopefully I covered all of them). However, it was interesting to code and see how the Lexer does its job.
+
+P.S. I've implemented lexer the way I saw it the most convenient to work with when parsing, so please do not judge :)
 
 
 
 ## References
-- **A Sample of a Lexer Implementation** - Accessed March 13, 2024. [https://llvm.org/docs/tutorial/MyFirstLanguageFrontend/LangImpl01.html](https://llvm.org/docs/tutorial/MyFirstLanguageFrontend/LangImpl01.html).
+[1] **A Sample of a Lexer Implementation** - Accessed March 13, 2024. [https://llvm.org/docs/tutorial/MyFirstLanguageFrontend/LangImpl01.html](https://llvm.org/docs/tutorial/MyFirstLanguageFrontend/LangImpl01.html).
+
+[2] **DSL Grammar for image processing** - Accessed March 13, 2024. [https://1drv.ms/b/c/06b88d8283f1f472/EcWOdkET6aVOtnGd6-9MG3QB221Cpzyqvsfwg0QWueeGLg?e=m6SUlf].
+
+[3] **Introduction to Lexical Analysis** - Accessed March 12, 2024. [https://www.geeksforgeeks.org/introduction-of-lexical-analysis/].
 
