@@ -4,10 +4,10 @@ import java.util.*;
 
 public class Grammar {
 
-    private List<Character> Vn;
-    private List<Character> Vt;
-    private Map<String,List<String>> P;
-    private Character S;
+    protected List<Character> Vn;
+    protected List<Character> Vt;
+    protected Map<String,List<String>> P;
+    protected Character S;
     private Random random;
 
 
