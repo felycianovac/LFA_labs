@@ -11,7 +11,7 @@ public class Tokenizer {
     private static final String EQUALS_REGEX = "=";
     private static final String FILE_PATH_REGEX ="\"[^\"]+\\.(png|jpg|bmp|gif)\""; // Specific for file paths with extension
     private static final String FOLDER_PATH_REGEX = "\"(?!.*\\.(png|jpg|bmp|gif)$)[^\"]+\"";
-    private static final String IMAGE_TYPE_REGEX = "\"(png|jpg|bmp|gif)\"";
+    private static final String IMAGE_TYPE_REGEX = "(png|jpg|bmp|gif)";
     private static final String PARAMETER_REGEX = "--(x|y|w|h|deg|lvl|img|format)\\b";
     private static final String COMMAND_REGEX = "\\b(crop|convert|rotate|flipX|flipY|bw|resize|contrast|brightness|negative|colorize|blur|sharpen|compress|ft|threshold)";
 
@@ -25,7 +25,6 @@ public class Tokenizer {
         List<Token> tokens = new ArrayList<>();
         Matcher matcher = TOKEN_PATTERN.matcher(input);
         int start = 0; // Start index of the current token in the input string
-
         while (matcher.find()) {
             if (matcher.start() > start) {
                 // There's unmatched input before the current match
