@@ -1,4 +1,3 @@
-package laboratory;
 import net.sourceforge.plantuml.SourceStringReader;
 
 import java.io.File;

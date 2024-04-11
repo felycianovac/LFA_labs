@@ -1,10 +1,8 @@
-package laboratory;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import static laboratory.Tokenizer.tokenize;
+import static Tokenizer.tokenize;
 
 public class Main {
     public static void main(String[] args) {

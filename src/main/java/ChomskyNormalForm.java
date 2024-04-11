@@ -1,8 +1,6 @@
-package laboratory;
-
 import java.util.*;
 
-public class ChomskyNormalForm extends Grammar{
+public class ChomskyNormalForm extends Grammar {
     public ChomskyNormalForm(Grammar grammar) {
         super(grammar.Vn, grammar.Vt, grammar.P, grammar.S);
         Map<String, List<String>> updatedProductions;
@@ -26,7 +24,7 @@ public class ChomskyNormalForm extends Grammar{
 
 
 
-    private Map<String, List<String>> removeEpsilonProductions() {
+    public Map<String, List<String>> removeEpsilonProductions() {
         Set<String> epsilonProducingNonTerminals = new HashSet<>();
 
         P.forEach((nonTerminal, productions) -> {
@@ -118,7 +116,7 @@ public class ChomskyNormalForm extends Grammar{
 
         return resultProductions;
     }
-        public Map<String, List<String>> removeInaccessibleSymbols() {
+    public Map<String, List<String>> removeInaccessibleSymbols() {
             Set<String> accessibleSymbols = new HashSet<>();
             accessibleSymbols.add("S");
 
@@ -149,7 +147,7 @@ public class ChomskyNormalForm extends Grammar{
             }
 
             return newProductions;
-        }
+    }
 
     public Map<String, List<String>> removeNonProductiveSymbols() {
         Set<String> productiveSymbols = new HashSet<>();
