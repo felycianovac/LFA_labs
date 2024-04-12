@@ -6,7 +6,9 @@ import static org.junit.Assert.assertTrue;
 
 public class ChomskyNormalFormTest {
     private Grammar grammar;
+    private Grammar grammar2;
     private ChomskyNormalForm chomskyNormalForm;
+    private ChomskyNormalForm cnf2;
 
     @Before
     public void setUp() {
@@ -21,6 +23,20 @@ public class ChomskyNormalFormTest {
         Character S = 'S';
         grammar = new Grammar(Vn, Vt, P, S);
         chomskyNormalForm = new ChomskyNormalForm(grammar);
+
+        //Test for another variant, let's say 8
+        List<Character> Vn2 = Arrays.asList('S', 'A', 'B', 'C');
+        List<Character> Vt2 = Arrays.asList('a', 'd');
+        Map<String, List<String>> P2 = new HashMap<>() {{
+            put("S", List.of("dB", "A"));
+            put("A", List.of("d", "dS","aAdAB"));
+            put("B", List.of("a", "aS","A","ε"));
+            put("C", List.of("Aa"));
+        }};
+        Character S2 = 'S';
+        grammar2 = new Grammar(Vn2, Vt2, P2, S2);
+        cnf2 = new ChomskyNormalForm(grammar2);
+
     }
 
     @Test
@@ -38,9 +54,8 @@ public class ChomskyNormalFormTest {
 
     @Test
     public void testEpsilonRemoval() {
-        ChomskyNormalForm cnf = new ChomskyNormalForm(grammar);
-        cnf.setP(cnf.removeEpsilonProductions());
-        boolean hasEpsilon = cnf.getP().values().stream()
+        cnf2.setP(cnf2.removeEpsilonProductions());
+        boolean hasEpsilon = cnf2.getP().values().stream()
                 .anyMatch(productions -> productions.contains("ε"));
         assertEquals(false, hasEpsilon);
     }
@@ -63,12 +78,11 @@ public class ChomskyNormalFormTest {
 
     @Test
     public void testUnitProductionsRemoval() {
-        ChomskyNormalForm cnf = new ChomskyNormalForm(grammar);
-        cnf.setP(cnf.removeEpsilonProductions());
-        cnf.setP(cnf.removeUnitProductions());
-        boolean hasUnitProduction = cnf.getP().entrySet().stream()
+        cnf2.setP(cnf2.removeEpsilonProductions());
+        cnf2.setP(cnf2.removeUnitProductions());
+        boolean hasUnitProduction = cnf2.getP().entrySet().stream()
                 .anyMatch(entry -> entry.getValue().stream()
-                        .anyMatch(production -> production.length() == 1 && cnf.getVn().contains(production.charAt(0))));
+                        .anyMatch(production -> production.length() == 1 && cnf2.getVn().contains(production.charAt(0))));
         assertEquals(false, hasUnitProduction);
     }
 
@@ -88,25 +102,24 @@ public class ChomskyNormalFormTest {
 
     @Test
     public void testInaccessibleSymbolsRemoval() {
-        ChomskyNormalForm cnfTransformed = new ChomskyNormalForm(grammar);
-        cnfTransformed.setP(cnfTransformed.removeEpsilonProductions());
-        cnfTransformed.setP(cnfTransformed.removeUnitProductions());
-        cnfTransformed.setP(cnfTransformed.removeInaccessibleSymbols());
+        cnf2.setP(cnf2.removeEpsilonProductions());
+        cnf2.setP(cnf2.removeUnitProductions());
+        cnf2.setP(cnf2.removeInaccessibleSymbols());
         // Collect all accessible symbols starting from the start symbol
         Set<String> accessibleSymbols = new HashSet<>();
         Set<String> toCheck = new HashSet<>();
-        accessibleSymbols.add(String.valueOf(cnfTransformed.getS()));
-        toCheck.add(String.valueOf(cnfTransformed.getS()));
+        accessibleSymbols.add(String.valueOf(cnf2.getS()));
+        toCheck.add(String.valueOf(cnf2.getS()));
 
         while (!toCheck.isEmpty()) {
             Set<String> newToCheck = new HashSet<>();
             for (String symbol : toCheck) {
-                List<String> productions = cnfTransformed.getP().get(symbol);
+                List<String> productions = cnf2.getP().get(symbol);
                 if (productions != null) {
                     for (String production : productions) {
                         for (char c : production.toCharArray()) {
                             String cStr = String.valueOf(c);
-                            if (cnfTransformed.getVn().contains(c) && accessibleSymbols.add(cStr)) {
+                            if (cnf2.getVn().contains(c) && accessibleSymbols.add(cStr)) {
                                 newToCheck.add(cStr);
                             }
                         }
@@ -117,7 +130,7 @@ public class ChomskyNormalFormTest {
         }
 
         // Verify that all non-terminals are accessible
-        for (Character nt : cnfTransformed.getVn()) {
+        for (Character nt : cnf2.getVn()) {
             assertTrue("Non-terminal " + nt + " is inaccessible", accessibleSymbols.contains(String.valueOf(nt)));
         }
 
@@ -140,14 +153,13 @@ public class ChomskyNormalFormTest {
     @Test
     public void testNonProductiveSymbolsRemoval(){
         // Apply CNF transformation
-        ChomskyNormalForm cnf = new ChomskyNormalForm(grammar);
-        cnf.setP(cnf.removeEpsilonProductions());
-        cnf.setP(cnf.removeUnitProductions());
-        cnf.setP(cnf.removeInaccessibleSymbols());
-        cnf.setP(cnf.removeNonProductiveSymbols());
+        cnf2.setP(cnf2.removeEpsilonProductions());
+        cnf2.setP(cnf2.removeUnitProductions());
+        cnf2.setP(cnf2.removeInaccessibleSymbols());
+        cnf2.setP(cnf2.removeNonProductiveSymbols());
 
         // Check that all non-terminals in the productions are productive
-        Map<String, List<String>> productions = cnf.getP();
+        Map<String, List<String>> productions = cnf2.getP();
         Set<String> productiveSymbols = new HashSet<>(productions.keySet()); // Assuming removeNonProductiveSymbols is correct
 
         boolean allProductive = true;
@@ -196,15 +208,14 @@ public class ChomskyNormalFormTest {
 
     @Test
     public void testChomskyNormalFormConversion() {
-        ChomskyNormalForm cnf = new ChomskyNormalForm(grammar);
-        cnf.setP(cnf.removeEpsilonProductions());
-        cnf.setP(cnf.removeUnitProductions());
-        cnf.setP(cnf.removeInaccessibleSymbols());
-        cnf.setP(cnf.removeNonProductiveSymbols());
-        cnf.setP(cnf.toCNF());
+        cnf2.setP(cnf2.removeEpsilonProductions());
+        cnf2.setP(cnf2.removeUnitProductions());
+        cnf2.setP(cnf2.removeInaccessibleSymbols());
+        cnf2.setP(cnf2.removeNonProductiveSymbols());
+        cnf2.setP(cnf2.toCNF());
 
 
-        Map<String, List<String>> productions = cnf.getP();
+        Map<String, List<String>> productions = cnf2.getP();
         Set<String> productiveSymbols = new HashSet<>(productions.keySet()); // Assuming these are all productive now
 
         boolean allProductive = true;

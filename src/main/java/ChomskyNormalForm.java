@@ -4,28 +4,7 @@ import java.util.stream.Collectors;
 public class ChomskyNormalForm extends Grammar {
     public ChomskyNormalForm(Grammar grammar) {
         super(grammar.Vn, grammar.Vt, grammar.P, grammar.S);
-
-
-//        Map<String, List<String>> updatedProductions;
-//        updatedProductions = removeEpsilonProductions();
-//        this.P = updatedProductions;
-//
-//        updatedProductions = removeUnitProductions();
-//        this.P = updatedProductions;
-//
-//        updatedProductions = removeInaccessibleSymbols();
-//        this.P = updatedProductions;
-//        updatedProductions = removeNonProductiveSymbols();
-//        this.P = updatedProductions;
-//
-//        updatedProductions = toCNF();
-//        this.P = updatedProductions;
-
-
-
     }
-
-
 
     public Map<String, List<String>> removeEpsilonProductions() {
         Set<String> epsilonProducingNonTerminals = new HashSet<>();
@@ -283,34 +262,5 @@ public class ChomskyNormalForm extends Grammar {
 
         return newProductions;
     }
-
-
-
-
-
-
-
-
-
-    //test main
-    public static void main(String[] args) {
-        List<Character> Vn = List.of('S', 'A', 'B', 'C', 'D');
-        List<Character> Vt = List.of('a', 'b');
-        Map<String, List<String>> P = new HashMap<>() {{
-            put("S", List.of("abAB"));
-            put("A", List.of("aSab", "BS","aA","b"));
-            put("B", List.of("BA","ababB","b","ε"));
-            put("C", List.of("AS"));
-        }};
-
-        Character S = 'S';
-        Grammar grammar = new Grammar(Vn, Vt, P, S);
-        ChomskyNormalForm chomskyNormalForm = new ChomskyNormalForm(grammar);
-        chomskyNormalForm.printGrammar();
-
-    }
-
-
-
 
 }
