@@ -2,33 +2,21 @@ import org.junit.Before;
 import org.junit.Test;
 import java.util.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ChomskyNormalFormTest {
     private Grammar grammar;
     private ChomskyNormalForm chomskyNormalForm;
 
     @Before
-    public void setUp(){
-        /*
-        Variant 17
-        Q = {q0,q1,q2,q3},
-        ∑ = {a,b,c},
-        F = {q3},
-        δ(q0,a) = q0,
-        δ(q0,a) = q1,
-        δ(q1,b) = q1,
-        δ(q2,b) = q3,
-        δ(q1,a) = q2,
-        δ(q2,a) = q0.
-        Let S=q0, A=q1, B=q2, C=q3.
-         */
-        List<Character> Vn = Arrays.asList('S', 'A', 'B', 'C');
+    public void setUp() {
+        List<Character> Vn = Arrays.asList('S', 'A', 'B', 'C', 'D');
         List<Character> Vt = Arrays.asList('a', 'b');
         Map<String, List<String>> P = new HashMap<>() {{
-            put("S", List.of("aS", "aA"));
-            put("A", List.of("bA", "aB"));
-            put("B", List.of("bC","aS"));
-            put("C", List.of());
+            put("S", List.of("abAB"));
+            put("A", List.of("aSab", "BS", "aA", "b"));
+            put("B", List.of("BA", "ababB", "b", "ε"));
+            put("C", List.of("AS"));
         }};
         Character S = 'S';
         grammar = new Grammar(Vn, Vt, P, S);
@@ -36,65 +24,205 @@ public class ChomskyNormalFormTest {
     }
 
     @Test
-    public void testEpsilonRemoval() {
+    public void testEpsilonRemovalVariant() {
+        //test correctness of conversion
         Map<String, List<String>> result = chomskyNormalForm.removeEpsilonProductions();
-        //TODO: Replace the placeholders with the expected values
-//        Map<String, List<String>> expected = new HashMap<>() {{
-//            put("S", List.of("aS", "aA", "a"));
-//            put("A", List.of("bA", "aB", "b", "a"));
-//            put("B", List.of("bC", "aS", "b"));
-//            put("C", List.of());
-//        }};
-//        assertEquals(expected, result);
+        Map<String, List<String>> expected = new HashMap<>() {{
+            put("S", List.of("abA", "abAB"));
+            put("A", List.of("aA", "BS", "b", "S", "aSab"));
+            put("B", List.of("A", "b", "ababB", "BA", "abab"));
+            put("C", List.of("AS"));
+        }};
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void testEpsilonRemoval() {
+        ChomskyNormalForm cnf = new ChomskyNormalForm(grammar);
+        cnf.setP(cnf.removeEpsilonProductions());
+        boolean hasEpsilon = cnf.getP().values().stream()
+                .anyMatch(productions -> productions.contains("ε"));
+        assertEquals(false, hasEpsilon);
+    }
+
+    @Test
+    public void testUnitProductionsRemovalVariant() {
+        // First remove epsilon productions
+
+        chomskyNormalForm.setP(chomskyNormalForm.removeEpsilonProductions());
+        Map<String, List<String>> result = chomskyNormalForm.removeUnitProductions();
+
+        Map<String, List<String>> expected = new HashMap<>() {{
+            put("S", List.of("abA", "abAB"));
+            put("A", List.of("aA", "BS", "b", "aSab", "abA", "abAB"));
+            put("B", List.of("b", "ababB", "BA", "abab", "aA", "BS", "b", "aSab", "abA", "abAB"));
+            put("C", List.of("AS"));
+        }};
+        assertEquals(expected, result);
     }
 
     @Test
     public void testUnitProductionsRemoval() {
-        Map<String, List<String>> result = chomskyNormalForm.removeUnitProductions();
-        //TODO: Replace the placeholders with the expected values
-//        Map<String, List<String>> expected = new HashMap<>() {{
-//            put("S", List.of("aS", "aA", "a"));
-//            put("A", List.of("bA", "aB", "b", "a"));
-//            put("B", List.of("bC", "aS", "b"));
-//            put("C", List.of());
-//        }};
-//        assertEquals(expected, result);
+        ChomskyNormalForm cnf = new ChomskyNormalForm(grammar);
+        cnf.setP(cnf.removeEpsilonProductions());
+        cnf.setP(cnf.removeUnitProductions());
+        boolean hasUnitProduction = cnf.getP().entrySet().stream()
+                .anyMatch(entry -> entry.getValue().stream()
+                        .anyMatch(production -> production.length() == 1 && cnf.getVn().contains(production.charAt(0))));
+        assertEquals(false, hasUnitProduction);
     }
 
     @Test
-    public void testInaccessibleProductionsRemoval() {
+    public void testInaccessibleProductionsRemovalVariant() {
+        chomskyNormalForm.setP(chomskyNormalForm.removeEpsilonProductions());
+        chomskyNormalForm.setP(chomskyNormalForm.removeUnitProductions());
         Map<String, List<String>> result = chomskyNormalForm.removeInaccessibleSymbols();
-        //TODO: Replace the placeholders with the expected values
-//        Map<String, List<String>> expected = new HashMap<>() {{
-//            put("S", List.of("aS", "aA", "a"));
-//            put("A", List.of("bA", "aB", "b", "a"));
-//            put("B", List.of("bC", "aS", "b"));
-//        }};
-//        assertEquals(expected, result);
+
+        Map<String, List<String>> expected = new HashMap<>() {{
+            put("S", List.of("abA", "abAB"));
+            put("A", List.of("aA", "BS", "b", "aSab", "abA", "abAB"));
+            put("B", List.of("b", "ababB", "BA", "abab", "aA", "BS", "b", "aSab", "abA", "abAB"));
+        }};
+        assertEquals(expected, result);
     }
 
     @Test
-    public void testNonProductiveSymbolsRemoval() {
-        Map<String, List<String>> result = chomskyNormalForm.removeNonProductiveSymbols();
-        //TODO: Replace the placeholders with the expected values
-//        Map<String, List<String>> expected = new HashMap<>() {{
-//            put("S", List.of("aS", "aA", "a"));
-//            put("A", List.of("bA", "aB", "b", "a"));
-//            put("B", List.of("bC", "aS", "b"));
-//        }};
-//        assertEquals(expected, result);
+    public void testInaccessibleSymbolsRemoval() {
+        ChomskyNormalForm cnfTransformed = new ChomskyNormalForm(grammar);
+        cnfTransformed.setP(cnfTransformed.removeEpsilonProductions());
+        cnfTransformed.setP(cnfTransformed.removeUnitProductions());
+        cnfTransformed.setP(cnfTransformed.removeInaccessibleSymbols());
+        // Collect all accessible symbols starting from the start symbol
+        Set<String> accessibleSymbols = new HashSet<>();
+        Set<String> toCheck = new HashSet<>();
+        accessibleSymbols.add(String.valueOf(cnfTransformed.getS()));
+        toCheck.add(String.valueOf(cnfTransformed.getS()));
+
+        while (!toCheck.isEmpty()) {
+            Set<String> newToCheck = new HashSet<>();
+            for (String symbol : toCheck) {
+                List<String> productions = cnfTransformed.getP().get(symbol);
+                if (productions != null) {
+                    for (String production : productions) {
+                        for (char c : production.toCharArray()) {
+                            String cStr = String.valueOf(c);
+                            if (cnfTransformed.getVn().contains(c) && accessibleSymbols.add(cStr)) {
+                                newToCheck.add(cStr);
+                            }
+                        }
+                    }
+                }
+            }
+            toCheck = newToCheck;
+        }
+
+        // Verify that all non-terminals are accessible
+        for (Character nt : cnfTransformed.getVn()) {
+            assertTrue("Non-terminal " + nt + " is inaccessible", accessibleSymbols.contains(String.valueOf(nt)));
+        }
+
     }
+
+    @Test
+    public void testNonProductiveSymbolsRemovalVariant() {
+        chomskyNormalForm.setP(chomskyNormalForm.removeEpsilonProductions());
+        chomskyNormalForm.setP(chomskyNormalForm.removeUnitProductions());
+        chomskyNormalForm.setP(chomskyNormalForm.removeInaccessibleSymbols());
+        Map<String, List<String>> result = chomskyNormalForm.removeNonProductiveSymbols();
+        Map<String, List<String>> expected = new HashMap<>() {{
+            put("S", List.of("abA", "abAB"));
+            put("A", List.of("aA", "BS", "b", "aSab","abA","abAB"));
+            put("B", List.of("b", "ababB", "BA","abab","aA","BS","b","aSab","abA","abAB"));
+        }};
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void testNonProductiveSymbolsRemoval(){
+        // Apply CNF transformation
+        ChomskyNormalForm cnf = new ChomskyNormalForm(grammar);
+        cnf.setP(cnf.removeEpsilonProductions());
+        cnf.setP(cnf.removeUnitProductions());
+        cnf.setP(cnf.removeInaccessibleSymbols());
+        cnf.setP(cnf.removeNonProductiveSymbols());
+
+        // Check that all non-terminals in the productions are productive
+        Map<String, List<String>> productions = cnf.getP();
+        Set<String> productiveSymbols = new HashSet<>(productions.keySet()); // Assuming removeNonProductiveSymbols is correct
+
+        boolean allProductive = true;
+        for (Map.Entry<String, List<String>> entry : productions.entrySet()) {
+            for (String production : entry.getValue()) {
+                for (int i = 0; i < production.length(); i++) {
+                    char symbol = production.charAt(i);
+                    if (Character.isUpperCase(symbol) && !productiveSymbols.contains(String.valueOf(symbol))) {
+                        allProductive = false;
+                        break;
+                    }
+                }
+                if (!allProductive) break;
+            }
+            if (!allProductive) break;
+        }
+
+        assertEquals(true, allProductive);
+
+    }
+
+
+    @Test
+    public void testChomskyNormalFormConversionVariant() {
+        chomskyNormalForm.setP(chomskyNormalForm.removeEpsilonProductions());
+        chomskyNormalForm.setP(chomskyNormalForm.removeUnitProductions());
+        chomskyNormalForm.setP(chomskyNormalForm.removeInaccessibleSymbols());
+        chomskyNormalForm.setP(chomskyNormalForm.removeNonProductiveSymbols());
+        Map<String, List<String>> result = chomskyNormalForm.toCNF();
+        Map<String, List<String>> expected = new HashMap<>() {{
+            put("S", List.of("GA", "HB"));
+            put("A", List.of("CA", "BS", "b", "FD","GA","HB"));
+            put("B", List.of("b", "JB", "BA", "ID", "CA", "BS", "b", "FD", "GA", "HB"));
+            put("C", List.of("a"));
+            put("D", List.of("b"));
+            put("E", List.of("CS"));
+            put("F", List.of("EC"));
+            put("G", List.of("CD"));
+            put("H", List.of("GA"));
+            put("I", List.of("GC"));
+            put("J", List.of("ID"));
+        }};
+        assertEquals(expected, result);
+    }
+
 
     @Test
     public void testChomskyNormalFormConversion() {
-        Map<String, List<String>> result = chomskyNormalForm.toCNF();
-        //TODO: Replace the placeholders with the expected values
-//        Map<String, List<String>> expected = new HashMap<>() {{
-//            put("S", List.of("aS", "aA", "a"));
-//            put("A", List.of("bA", "aB", "b", "a"));
-//            put("B", List.of("bC", "aS", "b"));
-//        }};
-//        assertEquals(expected, result);
+        ChomskyNormalForm cnf = new ChomskyNormalForm(grammar);
+        cnf.setP(cnf.removeEpsilonProductions());
+        cnf.setP(cnf.removeUnitProductions());
+        cnf.setP(cnf.removeInaccessibleSymbols());
+        cnf.setP(cnf.removeNonProductiveSymbols());
+        cnf.setP(cnf.toCNF());
+
+
+        Map<String, List<String>> productions = cnf.getP();
+        Set<String> productiveSymbols = new HashSet<>(productions.keySet()); // Assuming these are all productive now
+
+        boolean allProductive = true;
+        for (Map.Entry<String, List<String>> entry : productions.entrySet()) {
+            for (String production : entry.getValue()) {
+                // Check each symbol in production to ensure it's either a terminal or a productive non-terminal
+                for (char symbol : production.toCharArray()) {
+                    if (Character.isUpperCase(symbol) && !productiveSymbols.contains(String.valueOf(symbol))) {
+                        allProductive = false;
+                        break;
+                    }
+                }
+                if (!allProductive) break;
+            }
+            if (!allProductive) break;
+        }
+
+        assertEquals(true, allProductive);
     }
 
 

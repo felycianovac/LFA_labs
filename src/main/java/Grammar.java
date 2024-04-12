@@ -244,7 +244,35 @@ public class Grammar {
         }
     }
 
+    public List<Character> getVn() {
+        return Vn;
+    }
 
+    public void setVn(List<Character> vn) {
+        Vn = vn;
+    }
 
+    public List<Character> getVt() {
+        return Vt;
+    }
 
+    public void setVt(List<Character> vt) {
+        Vt = vt;
+    }
+
+    public Map<String, List<String>> getP() {
+        return P;
+    }
+
+    public void setP(Map<String, List<String>> p) {
+        P = p;
+    }
+
+    public Character getS() {
+        return S;
+    }
+
+    public void setS(Character s) {
+        S = s;
+    }
 }

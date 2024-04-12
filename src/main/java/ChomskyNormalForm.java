@@ -1,22 +1,25 @@
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ChomskyNormalForm extends Grammar {
     public ChomskyNormalForm(Grammar grammar) {
         super(grammar.Vn, grammar.Vt, grammar.P, grammar.S);
-        Map<String, List<String>> updatedProductions;
-        updatedProductions = removeEpsilonProductions();
-        this.P = updatedProductions;
 
-        updatedProductions = removeUnitProductions();
-        this.P = updatedProductions;
 
-        updatedProductions = removeInaccessibleSymbols();
-        this.P = updatedProductions;
-        updatedProductions = removeNonProductiveSymbols();
-        this.P = updatedProductions;
-
-        updatedProductions = toCNF();
-        this.P = updatedProductions;
+//        Map<String, List<String>> updatedProductions;
+//        updatedProductions = removeEpsilonProductions();
+//        this.P = updatedProductions;
+//
+//        updatedProductions = removeUnitProductions();
+//        this.P = updatedProductions;
+//
+//        updatedProductions = removeInaccessibleSymbols();
+//        this.P = updatedProductions;
+//        updatedProductions = removeNonProductiveSymbols();
+//        this.P = updatedProductions;
+//
+//        updatedProductions = toCNF();
+//        this.P = updatedProductions;
 
 
 
@@ -138,13 +141,15 @@ public class ChomskyNormalForm extends Grammar {
                     }
                 }
             }
-
+            List<Character> newVn = new ArrayList<>(); // This will contain the updated set of non-terminals
             Map<String, List<String>> newProductions = new HashMap<>();
             for (Map.Entry<String, List<String>> entry : P.entrySet()) {
                 if (accessibleSymbols.contains(entry.getKey())) {
+                    newVn.add(entry.getKey().charAt(0));
                     newProductions.put(entry.getKey(), new ArrayList<>(entry.getValue()));
                 }
             }
+            Vn = newVn;
 
             return newProductions;
     }
@@ -201,6 +206,8 @@ public class ChomskyNormalForm extends Grammar {
                 }
             }
         }
+        Vn = productiveSymbols.stream().map(s -> s.charAt(0)).collect(Collectors.toList());
+
 
         return newProductions;
     }
@@ -210,6 +217,12 @@ public class ChomskyNormalForm extends Grammar {
         Map<Character, String> terminalReplacements = new HashMap<>();
         Map<String, String> existingProductions = new HashMap<>(); // Map RHS to existing Xn symbols
         int[] newVarCounter = {1}; // Use an array to allow modification
+        Set<Character> newNonTerminals = new HashSet<>(Vn);
+        char newVar = 'A';
+        while (newNonTerminals.contains(newVar)) {
+            newVar++;
+        }
+
 
         for (Map.Entry<String, List<String>> entry : P.entrySet()) {
             String lhs = entry.getKey();
@@ -225,11 +238,17 @@ public class ChomskyNormalForm extends Grammar {
                             if (terminalReplacement == null) {
                                 terminalReplacement = existingProductions.get(String.valueOf(sym));
                                 if (terminalReplacement == null) {
-                                    terminalReplacement = "X" + newVarCounter[0]++;
+                                    terminalReplacement = String.valueOf(newVar);
+                                    newNonTerminals.add(newVar);
                                     terminalReplacements.put(sym, terminalReplacement);
                                     existingProductions.put(String.valueOf(sym), terminalReplacement);
                                     newProductions.computeIfAbsent(terminalReplacement, x -> new ArrayList<>()).add(String.valueOf(sym));
-                                } else {
+
+                                    do {
+                                    newVar++;
+                                } while (newNonTerminals.contains(newVar));
+                            }
+                                 else {
                                     terminalReplacements.put(sym, terminalReplacement);
                                 }
                             }
@@ -241,20 +260,26 @@ public class ChomskyNormalForm extends Grammar {
 
                     while (modifiedProduction.size() > 2) {
                         String combinedSymbols = String.join("", modifiedProduction.subList(0, 2));
-                        String newVar = existingProductions.get(combinedSymbols);
-                        if (newVar == null) {
-                            newVar = "X" + newVarCounter[0]++;
-                            existingProductions.put(combinedSymbols, newVar);
-                            newProductions.put(newVar, List.of(combinedSymbols));
+                        String newVarStr = existingProductions.get(combinedSymbols);
+                        if (newVarStr == null) {
+                            newVarStr = String.valueOf(newVar);
+                            newNonTerminals.add(newVar);
+                            existingProductions.put(combinedSymbols, newVarStr);
+                            newProductions.put(newVarStr, List.of(combinedSymbols));
+
+                            do {
+                                newVar++;
+                            } while (newNonTerminals.contains(newVar));
                         }
                         modifiedProduction = new ArrayList<>(modifiedProduction.subList(2, modifiedProduction.size()));
-                        modifiedProduction.add(0, newVar);
+                        modifiedProduction.add(0, newVarStr);
                     }
 
                     newProductions.computeIfAbsent(lhs, k -> new ArrayList<>()).add(String.join("", modifiedProduction));
                 }
             }
         }
+        Vn = new ArrayList<>(newNonTerminals);
 
         return newProductions;
     }
@@ -271,12 +296,12 @@ public class ChomskyNormalForm extends Grammar {
     public static void main(String[] args) {
         List<Character> Vn = List.of('S', 'A', 'B', 'C', 'D');
         List<Character> Vt = List.of('a', 'b');
-        Map<String, List<String>> P = new HashMap<>();
-        P.put("S", List.of("aB","AC"));
-        P.put("A", List.of("a", "ASC","BC"));
-        P.put("B", List.of("b", "bS"));
-        P.put("C", List.of("BA", "ε"));
-
+        Map<String, List<String>> P = new HashMap<>() {{
+            put("S", List.of("abAB"));
+            put("A", List.of("aSab", "BS","aA","b"));
+            put("B", List.of("BA","ababB","b","ε"));
+            put("C", List.of("AS"));
+        }};
 
         Character S = 'S';
         Grammar grammar = new Grammar(Vn, Vt, P, S);
@@ -284,5 +309,8 @@ public class ChomskyNormalForm extends Grammar {
         chomskyNormalForm.printGrammar();
 
     }
+
+
+
 
 }
