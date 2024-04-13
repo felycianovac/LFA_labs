@@ -43,9 +43,12 @@ Iterate over the entries in P Map and retrieve the current key (non-terminal) be
 Now that we have identified the inaccessible symbols, we have to remove all the productions containing them. To do so, we iterate over the original productions Map and verify each key (non-terminal) if it is contained in `accessibleSymbols` Set as well, and if yes add it with the corresponding value to the Map that holds the new productions and  only the key to new Vn as well.
 
 ### Non-productive states removal
+The `removeNonProductiveSymbols` method operates similar to the previously described one, but does not initially add S to the Set. It also uses a `boolean changed` flag to keep track of any new States added in `productiveSymbols` Set. 
+We're set to identify all productive symbols, do so by iterating over the P productions, but process only those non-terminal that are not yet added to `productiveSymbols`, and for each non-terminal's production, check each symbol belongness to either `Vt` or `productiveSymbols`. If none of the conditions are met the `productionIsProductive` flag is marked as false and production isn't added to `productiveSymbols`.
+After identifying all productive symbols, we have to exclude the non-productive ones. Iterate once again over the P Map and process only the productions of the non-terminals that are marked as productive. Same as previously done, check each production's symbol belongness to either `Vt` or `productiveSymbols`. If at least one of the conditions is met, add the corresponding production to the `newProductions` with its corresponding non-terminal.
 
-
-
+### Conversion to CNF
+The `toCNF` method
 
 
 
