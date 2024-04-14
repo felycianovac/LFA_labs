@@ -213,21 +213,15 @@ Production Rules (P):
 And of course have a look at the test results from the `ChomskyNormalFormTest` class that are presented in Fig. 2
 
 <p align="center">
-  <img src="</p>](https://github.com/felycianovac/LFA_labs/blob/main/images/test_result.png)" alt="CNF" width="400"/>
+  <img src="https://github.com/felycianovac/LFA_labs/blob/main/images/test_result.png" alt="CNF" width="400"/>
   <br>
   <em>Figure 2. Unit Tests' Results </em>
 </p>
 
 
-In conclusion, I've managed to understand the essence of Lexical Analysis, how to implement it and perform an accurate tokenization with corresponding error validation. It took relatively much time when reviewing all possible input prompts and trying to overcome some possible issues that might occur (hopefully I covered all of them). However, it was interesting to code and see how the Lexer does its job.
-
-P.S. I've implemented lexer the way I saw it the most convenient to work with when parsing, so please do not judge :)
+In conclusion, I've managed to understand the essence of Chomsky Normal Form, how to implement it and perform an accurate conversion from a "messy" looking Context-Free Grammar to an "iconic" grammar, a kind of glow up :D. For testing the ChomskyNormalForm in action, I've written 10 unit-tests, 5 of them being variant-specific and the remaining just some general check-up. It was a hard work, but I'm proud that I'm finally writing this conclusion :) 
 
 
 
 ## References
-[1] **A Sample of a Lexer Implementation** - Accessed March 13, 2024. [https://llvm.org/docs/tutorial/MyFirstLanguageFrontend/LangImpl01.html](https://llvm.org/docs/tutorial/MyFirstLanguageFrontend/LangImpl01.html).
-
-[2] **DSL Grammar for image processing** - Accessed March 13, 2024. [https://1drv.ms/b/c/06b88d8283f1f472/EcWOdkET6aVOtnGd6-9MG3QB221Cpzyqvsfwg0QWueeGLg?e=m6SUlf](https://1drv.ms/b/c/06b88d8283f1f472/EcWOdkET6aVOtnGd6-9MG3QB221Cpzyqvsfwg0QWueeGLg?e=m6SUlf).
-
-[3] **Introduction to Lexical Analysis** - Accessed March 12, 2024. [https://www.geeksforgeeks.org/introduction-of-lexical-analysis/](https://www.geeksforgeeks.org/introduction-of-lexical-analysis/).
+[1] **Context Free Grammars. Chomsky Normal Form** - Accessed April 14, 2024. [https://drive.google.com/file/d/19muyiabGeGaoNDK-7PeuzYYDe6_c0e-t/view](https://drive.google.com/file/d/19muyiabGeGaoNDK-7PeuzYYDe6_c0e-t/view).
