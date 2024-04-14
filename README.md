@@ -9,9 +9,10 @@
 **Professors:** Dumitru Crețu, Irina Cojuhari
 
 ## Table of Contents
-- [Lab Assigment 1](src/main/reports/laboratory_1.md)
-- [Lab Assigment 2](src/main/reports/laboratory_2.md)
-- [Lab Assigment 3](src/main/reports/laboratory_3.md)
+- [Lab Assigment 1](src/reports/laboratory_1.md)
+- [Lab Assigment 2](src/reports/laboratory_2.md)
+- [Lab Assigment 3](src/reports/laboratory_3.md)
+- [Lab Assigment 5](src/reports/laboratory_5.md)
 
 
 
