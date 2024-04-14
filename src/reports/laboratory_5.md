@@ -48,20 +48,174 @@ We're set to identify all productive symbols, do so by iterating over the P prod
 After identifying all productive symbols, we have to exclude the non-productive ones. Iterate once again over the P Map and process only the productions of the non-terminals that are marked as productive. Same as previously done, check each production's symbol belongness to either `Vt` or `productiveSymbols`. If at least one of the conditions is met, add the corresponding production to the `newProductions` with its corresponding non-terminal.
 
 ### Conversion to CNF
-The `toCNF` method
+The `toCNF` method starts by initializing some Maps to manage new and existing productions and to track how terminals are replaced by non-terminals, and a Set of non-terminals is maintained to ensure new non-terminals do not duplicate existing ones.
+Then, it continues with iterating through each production in the grammar and identifies which productions do not require adjustment `rhs.length() == 1 && Vt.contains(rhs.charAt(0))) || (rhs.length()==2 && Vn.contains(rhs.charAt(0)) && Vn.contains(rhs.charAt(1)))`, meaning they are already in the form of either `A->a` or `A->AB` and are directly added to the resulting productions.
+The next step is to prepare the replacements in the productions that are not in the required form, and especially the terminals' replacements, which are transformed by introducing new non-terminal symbols. Once all terminals are transformed to non-terminals, we can proceed to split the productions to meet the length's requirements.
+In the same iteration through the P Map, we split these by introducing additional non-terminals for each `subList(0, 2)` from the production. Place the given production in the corresponding Maps and remove the two replaced characters                         `modifiedProduction = new ArrayList<>(modifiedProduction.subList(2, modifiedProduction.size()))` and add the new non-terminal to the beginning of the list
+ for the next production's iteration in the `while(modifiedProduction.size() > 2)` loop.
+After the production is fully processed and transformed, we form a String from the given List and add it to the corresponding `newProductions` Map.
 
+### Unit Tests
+To ensure that the `ChomskyNormalForm` class performs its transformations accurately, I've implemented a comprehensive suite of unit tests using JUnit as the testing framework. This choice is motivated by JUnit's widespread adoption, robust features, and ease of integration with IDEs and build systems, making it a standard for Java unit testing.
 
+I've designed 5 tests for my Variant, where I check the corectness of each method's perfomance, with the use of JUnit's `assertEquals(Object expected, Object actual)`, where `actual` is the method's results and  `expected` represents the computed outcomes presented in Fig. 1 and manually introduced within the program. 
+
+<p align="center">
+  <img src="https://github.com/felycianovac/LFA_labs/blob/main/images/manual_cnf.jpeg" alt="CNF" width="400"/>
+  <br>
+  <em>Figure 1. Manual Conversion to CNF V. 17</em>
+</p>
+
+Additionally, I have designed tests to verify that after executing the transformation methods, there are no epsilon productions, unit productions, and other undesirable elements left at a specific step. These checks are similar to the ones performed within each method described above and the elements' presence is stored in a `boolean` flag, so the success is appreciated according to its value. Also, an important note is that these checks will be performed on a different variant than mine (let's say the 8th one).
+
+All test methods are organized under the `ChomskyNormalFormTest` class in the [test/java directory](https://github.com/felycianovac/LFA_labs/tree/main/src/test/java). This conventional placement ensures that tests are easily accessible and distinctly separated from the main application code.
 
 ## Conclusions / Screenshots / Results
-In order to "simulate" the DSL in function, I take the input commands from the console, and I'll provide some screenshots with valid & invalid input prompts and the corresponding results.
+In order to better visualize what happens at each specific steps, I'll use the Grammar's `printGrammar()` method implementend in Laboratory 1, as Grammar class is the ChomskyNormalForm's parent class, and will call it after each method's execution.
 
-As it can be seen from Table 1 and compared to the Grammar from [2], the only *parts* of the input that are being added to the List of Token objects, are those defined within the *grammar* and *regex*.
+In the beggining of the conversion to CNF trip, we are facing the following Grammar (the one presented in V. 17):
+```
+Non-terminals (Vn): [S, A, B, C, D, E]
+Terminals (Vt): [a, b]
+Start Symbol (S): S
+Production Rules (P):
+  A -> a
+  A -> ASC
+  A -> BC
+  A -> aD
+  B -> b
+  B -> bA
+  S -> aA
+  S -> AC
+  C -> ε
+  C -> BA
+  D -> abC
+  E -> aB
+```
 
-|                      Valid Input Prompts                      |                      Invalid Input Prompts                      |
-|:-------------------------------------------------------------:|:-----------------------------------------------------------------:|
-| <img src="https://github.com/felycianovac/LFA_labs/blob/main/images/valid1.png" width="300"> <img src="https://github.com/felycianovac/LFA_labs/blob/main/images/valid2.png" width="300"> | <img src="https://github.com/felycianovac/LFA_labs/blob/main/images/invalid1.png" width="300"> <img src="https://github.com/felycianovac/LFA_labs/blob/main/images/invalid2.png" width="300"> |
+After calling the `removeEpsilonProductions()` method, we are left with the Grammar presented below. Observe that the ε-productions did dissapear and some more like `S -> A`, `A -> AS`, `A -> B` and `D -> ab` did appear.
+```
+Non-terminals (Vn): [S, A, B, C, D, E]
+Terminals (Vt): [a, b]
+Start Symbol (S): S
+Production Rules (P):
+  A -> a
+  A -> ASC
+  A -> BC
+  A -> AS
+  A -> B
+  A -> aD
+  B -> b
+  B -> bA
+  S -> aA
+  S -> A
+  S -> AC
+  C -> BA
+  D -> ab
+  D -> abC
+  E -> aB
+```
+
+Then, we apply the `removeUnitProductions()` method on the obtained Grammar from the previous step. Observe the resulting Grammar presented above, the productions `S -> A` and `A -> B` did disappear and some others like `A -> bA`, `A -> b`, `S -> ASC`, `S -> BC`, `S -> AS`, `S -> aD`, `S -> b` and `S -> bA` did appear.
+
+```
+Non-terminals (Vn): [S, A, B, C, D, E]
+Terminals (Vt): [a, b]
+Start Symbol (S): S
+Production Rules (P):
+  A -> a
+  A -> ASC
+  A -> BC
+  A -> AS
+  A -> aD
+  A -> b
+  A -> bA
+  B -> b
+  B -> bA
+  C -> BA
+  S -> aA
+  S -> AC
+  S -> a
+  S -> ASC
+  S -> BC
+  S -> AS
+  S -> aD
+  S -> b
+  S -> bA
+  D -> ab
+  D -> abC
+  E -> aB
+```
+
+We then apply `removeInaccessibleSymbols()` method and observe that the production with E did dissapeard from Production RUles (P) as well as from Non-terminals (Vn).
+```
+Non-terminals (Vn): [A, B, C, S, D]
+Terminals (Vt): [a, b]
+Start Symbol (S): S
+Production Rules (P):
+  A -> a
+  A -> ASC
+  A -> BC
+  A -> AS
+  A -> aD
+  A -> b
+  A -> bA
+  B -> b
+  B -> bA
+  C -> BA
+  S -> aA
+  S -> AC
+  S -> a
+  S -> ASC
+  S -> BC
+  S -> AS
+  S -> aD
+  S -> b
+  S -> bA
+  D -> ab
+  D -> abC
+```
+No changes are applied when calling `removeNonProductiveSymbols()` so I won't attach the result, just trust me :D 
+
+The last step is to convert the given grammar to CNF, such that all its productions will be in the form `A->BC` and `A->a`. After calling the `toCNF()` method, the resulting Grammar turns out to have new non-terminals that are *E*, *F*, *G*, *H* and the corresponding productions containing them. See below:
+```
+Non-terminals (Vn): [A, B, C, S, D, E, F, G, H]
+Terminals (Vt): [a, b]
+Start Symbol (S): S
+Production Rules (P):
+  A -> a
+  A -> EC
+  A -> BC
+  A -> AS
+  A -> FD
+  A -> b
+  A -> GA
+  B -> b
+  B -> GA
+  S -> FA
+  S -> AC
+  S -> a
+  S -> EC
+  S -> BC
+  S -> AS
+  S -> FD
+  S -> b
+  S -> GA
+  C -> BA
+  D -> FG
+  D -> HC
+  E -> AS
+  F -> a
+  G -> b
+  H -> FG
+```
+
+And of course have a look at the test results from the `ChomskyNormalFormTest` class that are presented in Fig. 2
+
 <p align="center">
-  <strong>Table 1.</strong> Tokenizer in Action
+  <img src="</p>](https://github.com/felycianovac/LFA_labs/blob/main/images/test_result.png)" alt="CNF" width="400"/>
+  <br>
+  <em>Figure 2. Unit Tests' Results </em>
 </p>
 
 
