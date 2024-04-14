@@ -12,13 +12,16 @@ public class ChomskyNormalFormTest {
 
     @Before
     public void setUp() {
-        List<Character> Vn = Arrays.asList('S', 'A', 'B', 'C', 'D');
+        List<Character> Vn = Arrays.asList('S', 'A', 'B', 'C', 'D','E');
         List<Character> Vt = Arrays.asList('a', 'b');
         Map<String, List<String>> P = new HashMap<>() {{
-            put("S", List.of("abAB"));
-            put("A", List.of("aSab", "BS", "aA", "b"));
-            put("B", List.of("BA", "ababB", "b", "ε"));
-            put("C", List.of("AS"));
+            put("S", List.of("aA","AC"));
+            put("A", List.of("a", "ASC", "BC", "aD"));
+            put("B", List.of("b", "bA"));
+            put("C", List.of("ε","BA"));
+            put("D", List.of("abC"));
+            put("E", List.of("aB"));
+
         }};
         Character S = 'S';
         grammar = new Grammar(Vn, Vt, P, S);
@@ -44,10 +47,12 @@ public class ChomskyNormalFormTest {
         //test correctness of conversion
         Map<String, List<String>> result = chomskyNormalForm.removeEpsilonProductions();
         Map<String, List<String>> expected = new HashMap<>() {{
-            put("S", List.of("abA", "abAB"));
-            put("A", List.of("aA", "BS", "b", "S", "aSab"));
-            put("B", List.of("A", "b", "ababB", "BA", "abab"));
-            put("C", List.of("AS"));
+            put("S", List.of("aA", "A","AC"));
+            put("A", List.of("a","ASC","BC","AS","B","aD"));
+            put("B", List.of("b","bA"));
+            put("C", List.of("BA"));
+            put("D", List.of("ab","abC"));
+            put("E", List.of("aB"));
         }};
         assertEquals(expected, result);
     }
@@ -68,10 +73,12 @@ public class ChomskyNormalFormTest {
         Map<String, List<String>> result = chomskyNormalForm.removeUnitProductions();
 
         Map<String, List<String>> expected = new HashMap<>() {{
-            put("S", List.of("abA", "abAB"));
-            put("A", List.of("aA", "BS", "b", "aSab", "abA", "abAB"));
-            put("B", List.of("b", "ababB", "BA", "abab", "aA", "BS", "b", "aSab", "abA", "abAB"));
-            put("C", List.of("AS"));
+            put("A", List.of("a","ASC","BC","AS","aD","b","bA"));
+            put("B", List.of("b","bA"));
+            put("C", List.of("BA"));
+            put("S", List.of("aA", "AC","a","ASC","BC","AS","aD","b","bA"));
+            put("D", List.of("ab","abC"));
+            put("E", List.of("aB"));
         }};
         assertEquals(expected, result);
     }
@@ -93,10 +100,12 @@ public class ChomskyNormalFormTest {
         Map<String, List<String>> result = chomskyNormalForm.removeInaccessibleSymbols();
 
         Map<String, List<String>> expected = new HashMap<>() {{
-            put("S", List.of("abA", "abAB"));
-            put("A", List.of("aA", "BS", "b", "aSab", "abA", "abAB"));
-            put("B", List.of("b", "ababB", "BA", "abab", "aA", "BS", "b", "aSab", "abA", "abAB"));
-        }};
+            put("A", List.of("a","ASC","BC","AS","aD","b","bA"));
+            put("B", List.of("b","bA"));
+            put("C", List.of("BA"));
+            put("S", List.of("aA", "AC","a","ASC","BC","AS","aD","b","bA"));
+            put("D", List.of("ab","abC"));
+       }};
         assertEquals(expected, result);
     }
 
@@ -143,9 +152,11 @@ public class ChomskyNormalFormTest {
         chomskyNormalForm.setP(chomskyNormalForm.removeInaccessibleSymbols());
         Map<String, List<String>> result = chomskyNormalForm.removeNonProductiveSymbols();
         Map<String, List<String>> expected = new HashMap<>() {{
-            put("S", List.of("abA", "abAB"));
-            put("A", List.of("aA", "BS", "b", "aSab","abA","abAB"));
-            put("B", List.of("b", "ababB", "BA","abab","aA","BS","b","aSab","abA","abAB"));
+            put("A", List.of("a","ASC","BC","AS","aD","b","bA"));
+            put("B", List.of("b","bA"));
+            put("C", List.of("BA"));
+            put("S", List.of("aA", "AC","a","ASC","BC","AS","aD","b","bA"));
+            put("D", List.of("ab","abC"));
         }};
         assertEquals(expected, result);
     }
@@ -190,17 +201,16 @@ public class ChomskyNormalFormTest {
         chomskyNormalForm.setP(chomskyNormalForm.removeNonProductiveSymbols());
         Map<String, List<String>> result = chomskyNormalForm.toCNF();
         Map<String, List<String>> expected = new HashMap<>() {{
-            put("S", List.of("GA", "HB"));
-            put("A", List.of("CA", "BS", "b", "FD","GA","HB"));
-            put("B", List.of("b", "JB", "BA", "ID", "CA", "BS", "b", "FD", "GA", "HB"));
-            put("C", List.of("a"));
-            put("D", List.of("b"));
-            put("E", List.of("CS"));
-            put("F", List.of("EC"));
-            put("G", List.of("CD"));
-            put("H", List.of("GA"));
-            put("I", List.of("GC"));
-            put("J", List.of("ID"));
+            put("S", List.of("FA", "AC","a","EC","BC","AS","FD","b","GA"));
+            put("A", List.of("a", "EC", "BC", "AS", "FD", "b", "GA"));
+
+            put("B", List.of("b", "GA"));
+            put("C", List.of("BA"));
+            put("D", List.of("FG","HC"));
+            put("E", List.of("AS"));
+            put("F", List.of("a"));
+            put("G", List.of("b"));
+            put("H", List.of("FG"));
         }};
         assertEquals(expected, result);
     }

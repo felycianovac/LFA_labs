@@ -4,6 +4,17 @@ import java.util.stream.Collectors;
 public class ChomskyNormalForm extends Grammar {
     public ChomskyNormalForm(Grammar grammar) {
         super(grammar.Vn, grammar.Vt, grammar.P, grammar.S);
+//        Map<String, List<String>> newProductions = removeEpsilonProductions();
+//        P = newProductions;
+//        newProductions = removeUnitProductions();
+//        P = newProductions;
+//        newProductions = removeInaccessibleSymbols();
+//        P = newProductions;
+//        newProductions = removeNonProductiveSymbols();
+//        P = newProductions;
+//        newProductions = toCNF();
+//        P = newProductions;
+
     }
 
     public Map<String, List<String>> removeEpsilonProductions() {
@@ -310,6 +321,26 @@ public class ChomskyNormalForm extends Grammar {
         Vn = new ArrayList<>(newNonTerminals);
 
         return newProductions;
+    }
+
+    //main
+    public static void main(String[] args) {
+
+        List<Character> Vn = Arrays.asList('S', 'A', 'B', 'C', 'D','E');
+        List<Character> Vt = Arrays.asList('a', 'b');
+        Map<String, List<String>> P = new HashMap<>() {{
+            put("S", List.of("aA","AC"));
+            put("A", List.of("a", "ASC", "BC", "aD"));
+            put("B", List.of("b", "bA"));
+            put("C", List.of("ε","BA"));
+            put("D", List.of("abC"));
+            put("E", List.of("aB"));
+            }};
+        Character S = 'S';
+        ChomskyNormalForm cnf = new ChomskyNormalForm(new Grammar(Vn, Vt, P, S));
+        cnf.printGrammar();
+
+
     }
 
 }
