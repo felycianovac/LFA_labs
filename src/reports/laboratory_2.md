@@ -110,7 +110,7 @@ After a long research and several trials of implementing Java libraries for plot
 
 
 <p align="center">
-  <img src="../../../images/generated_finite_automaton.png" alt="Finite Automaton Generated Graph" width="200"/>
+  <img src="https://github.com/felycianovac/LFA_labs/blob/main/images/generated_finite_automaton.png" alt="Finite Automaton Generated Graph" width="200"/>
   <br>
   <em>Figure 1. Finite Automaton Visualization V. 17</em>
 </p>
