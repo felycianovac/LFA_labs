@@ -13,6 +13,8 @@
 - [Lab Assigment 2](src/reports/laboratory_2.md)
 - [Lab Assigment 3](src/reports/laboratory_3.md)
 - [Lab Assigment 5](src/reports/laboratory_5.md)
+- [Lab Assigment 5](src/reports/laboratory_6.md)
+
 
 
 
