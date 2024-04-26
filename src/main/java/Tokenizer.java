@@ -7,14 +7,18 @@ public class Tokenizer {
     private static final String NUMBER_REGEX = "-?\\d+";
     private static final String IMAGE_IDENTIFIER_REGEX = "--img";
     private static final String EQUALS_REGEX = "=";
-    private static final String FILE_PATH_REGEX ="\"[^\"]+\\.(png|jpg|bmp|gif)\""; // Specific for file paths with extension
-    private static final String FOLDER_PATH_REGEX = "\"(?!.*\\.(png|jpg|bmp|gif)$)[^\"]+\"";
-    private static final String IMAGE_TYPE_REGEX = "(png|jpg|bmp|gif)";
+    private static final String FILE_PATH_REGEX ="\"[^\"]+\\.(png|jpg|bmp|gif|jpeg|tiff|webp)\""; // Specific for file paths with extension
+
+    private static final String FOLDER_PATH_REGEX = "\"(?!.*\\.(png|jpg|bmp|gif|tiff|webp|jpeg)$)[^\"]+\"";
+    private static final String IMAGE_TYPE_REGEX = "(png|jpg|bmp|gif|jpeg|tiff|webp)";
     private static final String PARAMETER_REGEX = "--(x|y|w|h|deg|lvl|img|format)\\b";
-    private static final String COMMAND_REGEX = "\\b(crop|convert|rotate|flipX|flipY|bw|resize|contrast|brightness|negative|colorize|blur|sharpen|compress|ft|threshold)";
+    private static final String COMMAND_REGEX = "\\b(crop|convert|rotate|flipX|flipY|bw|resize|contrast|brightness|negative|colorize|blur|sharpen|compress|ft|threshold|reduceNoise|remBg)";
+    private static final String START_COMMAND_REGEX = "imp";
+    private static final String PIPE_LINE_REGEX = "->";
+
 
     private static final String TOKEN_REGEX = String.join("|",
-            COMMAND_REGEX,PARAMETER_REGEX, NUMBER_REGEX, IMAGE_TYPE_REGEX, PARAMETER_REGEX, FILE_PATH_REGEX, FOLDER_PATH_REGEX, EQUALS_REGEX, IMAGE_IDENTIFIER_REGEX
+            COMMAND_REGEX,PARAMETER_REGEX, NUMBER_REGEX, IMAGE_TYPE_REGEX, PARAMETER_REGEX, FILE_PATH_REGEX, FOLDER_PATH_REGEX, EQUALS_REGEX, IMAGE_IDENTIFIER_REGEX, START_COMMAND_REGEX, PIPE_LINE_REGEX
     );
 
     private static final Pattern TOKEN_PATTERN = Pattern.compile(TOKEN_REGEX);
@@ -33,13 +37,13 @@ public class Tokenizer {
             }
 
             String value = matcher.group();
-            String type = determineTokenType(value);
+            TokenType type = determineTokenType(value);
             //special case for absorbing quotes within the value
             //and manually adding the quotes as tokens
-            if ( "FILE_PATH".equals(type) || "FOLDER_PATH".equals(type)) {
-                tokens.add(new Token("QUOTE", "\""));
+            if ( type == TokenType.FILE_PATH || type == TokenType.FOLDER_PATH) {
+                tokens.add(new Token(TokenType.QUOTE, "\""));
                 tokens.add(new Token(type, value.substring(1, value.length() - 1)));
-                tokens.add(new Token("QUOTE", "\""));
+                tokens.add(new Token(TokenType.QUOTE, "\""));
             }
             else {
                 tokens.add(new Token(type, value));
@@ -63,26 +67,30 @@ public class Tokenizer {
     }
 
 
-    private static String determineTokenType(String value) {
+    private static TokenType  determineTokenType(String value) {
         if (value.matches(COMMAND_REGEX)) {
-            return "COMMAND";
+            return TokenType.COMMAND;
         } else if (value.matches(NUMBER_REGEX)) {
-            return "NUMBER";
+            return TokenType.NUMBER;
         } else if (value.matches(IMAGE_TYPE_REGEX)) {
-            return "IMAGE_TYPE";
+            return TokenType.IMAGE_TYPE;
         } else if (value.matches(IMAGE_IDENTIFIER_REGEX)) {
-            return "IMAGE_IDENTIFIER";
+            return TokenType.IMAGE_IDENTIFIER;
         } else if (value.matches(FILE_PATH_REGEX)) {
-            return "FILE_PATH";
+            return TokenType.FILE_PATH;
         } else if (value.matches(PARAMETER_REGEX)) {
-            return "PARAMETER";
+            return TokenType.PARAMETER;
         }
         else if (value.matches(FOLDER_PATH_REGEX)) {
-            return "FOLDER_PATH";
+            return TokenType.FOLDER_PATH;
         } else if (value.matches(EQUALS_REGEX)) {
-            return "EQUALS";
+            return TokenType.EQUALS;
+        } else if (value.matches(START_COMMAND_REGEX)) {
+            return TokenType.START_COMMAND;
+        } else if (value.matches(PIPE_LINE_REGEX)) {
+            return TokenType.PIPE_LINE;
         }  else {
-            return "UNKNOWN";
+            return TokenType.UNKNOWN;
         }
     }
 }

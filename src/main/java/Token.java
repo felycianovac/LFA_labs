@@ -1,17 +1,27 @@
 public class Token {
-    private String type;
     private String value;
+    private TokenType tokenType;
 
-    public Token(String type, String value) {
-        this.type = type;
+    public Token(TokenType tokenType, String value) {
+        this.tokenType = tokenType;
         this.value = value;
     }
 
     @Override
     public String toString() {
         return "Token{" +
-                "type='" + type + '\'' +
+                "type='" + tokenType + '\'' +
                 ", value='" + value + '\'' +
                 '}';
     }
+
+
+    public TokenType getType() {
+        return tokenType;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
 }
