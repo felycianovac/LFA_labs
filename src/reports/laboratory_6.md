@@ -37,12 +37,12 @@ It also initializes a stack to manage the tree-building process. The root node i
 Each new command token is pushed onto the stack, ensuring correct parent-child relationships. For instance, the `--img="folder\file\path"` wiil be considered as the child of the `imp` Token, and the next command will be then considered as its respective children.
 Also, When encountering a `PIPE_LINE`, the stack pops to transition to a previous context, reflecting a command chain or a pipeline operation.
 
-Additionally, I've implemented a `CommandStructure` class, where a static Map is defined. This map holds the commands' structure of the commands containing parameters, identifying them as required. 
+Additionally, I've implemented a `CommandStructure` class, where a static Map is defined. This map holds the commands' structure of the commands containing parameters, identifying them as required. This map is used when parsing Tokens identified as `COMMAND`.
 
 Tokens are processed using a switch statement and connected using the `addChild` method from the `ASTNode` class. If a new command or operation is encountered, it is added as a child to the current stack's top node.
 
 ## Conclusions / Screenshots / Results
-In order to better visualize the hierarchical representation of the parsing result (AST), I've implemented two helper methods `printParseTree` and `printNode` for displaying the tree. This map is used when parsing Tokens identified as `COMMAND`.
+In order to better visualize the hierarchical representation of the parsing result (AST), I've implemented two helper methods `printParseTree` and `printNode` for displaying the tree. 
 
 So, let's analyze a few command and see the results. Note that the commands are firstly passed to the Tokenizing phase and only then received by parser.
 
